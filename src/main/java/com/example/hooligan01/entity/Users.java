@@ -16,19 +16,16 @@ public class Users {
     private String name;
 
     @Column(nullable = false)
-    private String loginId;
+    private String account;
 
     @Column(nullable = false)
     private String password;
 
     @Column(nullable = false)
-    private String nick;
+    private String nickname;
 
     @Column(nullable = false)
-    private String email;
-
-    @Column(nullable = false)
-    private String phone;
+    private String phoneNumber;
 
     @Column(nullable = false)
     private String birth;
@@ -36,9 +33,15 @@ public class Users {
 //    @Column
 //    private String accessToken;
 
-    @Column(columnDefinition = "integer default 0", nullable = false)
-    private int betPoint;
+    @Column
+    private String firstTeam;
 
     @Column
-    private String team;
+    private String secondTeam;
+
+    @Column
+    private String thirdTeam;
+
+    @Column(columnDefinition = "integer default 0", nullable = false)
+    private int betPoint;
 }

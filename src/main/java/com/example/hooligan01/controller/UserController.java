@@ -40,10 +40,10 @@ public class UserController {
         // 로그인 성공
         if (loginResult != null) {
 
-            session.setAttribute("loginId", loginResult.getLoginId());
-            session.setAttribute("nick", loginResult.getNick());
+            session.setAttribute("loginId", loginResult.getAccount());
+            session.setAttribute("nick", loginResult.getNickname());
 
-            return loginResult.getLoginId();
+            return loginResult.getAccount();
         } else {
             return null;
         }
@@ -52,7 +52,7 @@ public class UserController {
     // 아이디 찾기(이메일과 비밀번호를 받음)
     @PostMapping("/findUserId")
     public Users userFindUserId(@RequestBody Users users) {
-        Users findIdResult = userService.findIdPw(users.getEmail());
+        Users findIdResult = userService.findIdPw(users.getAccount());
 
         if (findIdResult == null) {
             return null;
@@ -66,11 +66,11 @@ public class UserController {
     // 비밀번호 찾기(이메일과 아이디 받음)
     @PostMapping("/findUserPassword")
     public Users userFindUserPw(@RequestBody Users users) {
-        Users findIdResult = userService.findIdPw(users.getEmail());
+        Users findIdResult = userService.findIdPw(users.getAccount());
 
         if (findIdResult == null) {
             return null;
-        } else if (!findIdResult.getLoginId().equals(users.getLoginId())) {
+        } else if (!findIdResult.getAccount().equals(users.getAccount())) {
             return null;
         } else
              return findIdResult;
