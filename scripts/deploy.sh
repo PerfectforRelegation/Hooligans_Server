@@ -18,7 +18,7 @@ if [ -z $CURRENT_PID ]
 then
   echo "> 종료할 애플리케이션이 없습니다. \n" >> $BUILD_LOG
 else
-  echo "> kill -9 $CURRENT_PID \n" >> $ BUILD_LOG
+  echo "> kill -9 $CURRENT_PID \n" >> $BUILD_LOG
   kill -15 $CURRENT_PID
   sleep 5
 fi
