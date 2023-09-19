@@ -25,7 +25,7 @@ public class BoardController {
     @PostMapping("/write")
     public Boolean boardWrite(@RequestBody Boards board, HttpSession session) {
 
-        board.setNick((String) session.getAttribute("nick"));
+        board.setNickname((String) session.getAttribute("nickname"));
 
         boardService.write(board);
 
@@ -49,11 +49,11 @@ public class BoardController {
     @GetMapping("updateForm/{id}")
     public Boards boardUpdateForm(@PathVariable Long id, HttpSession session) {
 
-        String myNick = (String) session.getAttribute("nick");
+        String myNickname = (String) session.getAttribute("nickname");
 
         Boards boards = boardService.findByBoardId(id);
 
-        if (boards.getNick().equals(myNick)) {
+        if (boards.getNickname().equals(myNickname)) {
             return boards;
         } else {
             return null;
@@ -64,8 +64,8 @@ public class BoardController {
     @PostMapping("update")
     public Boolean update(@RequestBody Boards boards) {
 
-        if (boards.getModified() == null)
-            boards.setModified("수정됨");
+        if (!boards.isModified())
+            boards.setModified(true);
 
         return boardService.update(boards);
     }
@@ -76,9 +76,9 @@ public class BoardController {
 
         Boards boards = boardService.findByBoardId(id);
 
-        String myNick = (String) session.getAttribute("nick");
+        String myNickname = (String) session.getAttribute("nickname");
 
-        if (boards.getNick().equals(myNick)) {
+        if (boards.getNickname().equals(myNickname)) {
             boardService.deleteByBoardId(id);
             return true;
         } else {

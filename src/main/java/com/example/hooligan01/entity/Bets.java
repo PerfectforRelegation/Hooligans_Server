@@ -13,7 +13,7 @@ public class Bets {
     private Long id;
 
     @Column(nullable = false)
-    private String nick;
+    private String nickname;
 
     @Column(nullable = false)
     private String match;

@@ -15,7 +15,7 @@ public class Boards {
     private Long id;
 
     @Column(nullable = false)
-    private String nick;
+    private String nickname;
 
     @Column(nullable = false)
     private String title;
@@ -32,8 +32,8 @@ public class Boards {
     @Column(columnDefinition = "integer default 0", nullable = false)
     private int view;
 
-    @Column
-    private String modified;
+    @Column(columnDefinition = "BOOLEAN DEFAULT FALSE", nullable = false)
+    private boolean modified;
 
     @CreationTimestamp
     @Column(nullable = false)

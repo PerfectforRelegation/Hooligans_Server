@@ -21,19 +21,19 @@ public class UserService {
 
     public void join(Users user) {
 
-        Optional<Users> byUserLogId = userRepository.findByAccount(user.getAccount());
+        Optional<Users> byUserAccount = userRepository.findByAccount(user.getAccount());
 
-        if (byUserLogId.isEmpty()) {
+        if (byUserAccount.isEmpty()) {
             userRepository.save(user);
         }
     }
 
     public Users login(Users user) {
 
-        Optional<Users> byLoginId = userRepository.findByAccount(user.getAccount());
+        Optional<Users> byUserAccount = userRepository.findByAccount(user.getAccount());
 
-        if (byLoginId.isPresent()) {
-            Users userCheck = byLoginId.get();
+        if (byUserAccount.isPresent()) {
+            Users userCheck = byUserAccount.get();
             if (userCheck.getPassword().equals(user.getPassword())) {
                 return userCheck;
             } else {

@@ -40,8 +40,8 @@ public class UserController {
         // 로그인 성공
         if (loginResult != null) {
 
-            session.setAttribute("loginId", loginResult.getAccount());
-            session.setAttribute("nick", loginResult.getNickname());
+            session.setAttribute("account", loginResult.getAccount());
+            session.setAttribute("nickname", loginResult.getNickname());
 
             return loginResult.getAccount();
         } else {
@@ -50,6 +50,7 @@ public class UserController {
     }
 
     // 아이디 찾기(이메일과 비밀번호를 받음)
+    // 수정 필요!!
     @PostMapping("/findUserId")
     public Users userFindUserId(@RequestBody Users users) {
         Users findIdResult = userService.findIdPw(users.getAccount());
@@ -64,6 +65,7 @@ public class UserController {
     }
 
     // 비밀번호 찾기(이메일과 아이디 받음)
+    // 수정 필요!!
     @PostMapping("/findUserPassword")
     public Users userFindUserPw(@RequestBody Users users) {
         Users findIdResult = userService.findIdPw(users.getAccount());
@@ -82,9 +84,9 @@ public class UserController {
     @GetMapping("/updateForm")
     public Users userUpdateForm(HttpSession session) {
 
-        String myLoginId = (String) session.getAttribute("loginId");
+        String myAccount = (String) session.getAttribute("account");
 
-        return userService.updateForm(myLoginId);
+        return userService.updateForm(myAccount);
     }
 
     // 내 정보 수정(세션 안넣음)

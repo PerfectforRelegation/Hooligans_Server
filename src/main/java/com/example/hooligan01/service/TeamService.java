@@ -23,12 +23,12 @@ public class TeamService {
     // 팀 데이터 넣기
     public Boolean teamInsert(Teams team) {
 
-        Optional<Teams> byTeamLeague = teamRepository.findByLeague(team.getLeague());
+        Optional<Teams> byLeague = teamRepository.findByLeague(team.getLeague());
 
-        if (byTeamLeague.isEmpty()) {
+        if (byLeague.isEmpty()) {
             teamRepository.save(team);
             return true;
         } else
-            return null;
+            return false;
     }
 }
