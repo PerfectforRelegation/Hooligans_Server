@@ -21,7 +21,7 @@ public class UserService {
 
     public void join(Users user) {
 
-        Optional<Users> byUserLogId = userRepository.findByLoginId(user.getLoginId());
+        Optional<Users> byUserLogId = userRepository.findByAccount(user.getAccount());
 
         if (byUserLogId.isEmpty()) {
             userRepository.save(user);
@@ -30,7 +30,7 @@ public class UserService {
 
     public Users login(Users user) {
 
-        Optional<Users> byLoginId = userRepository.findByLoginId(user.getLoginId());
+        Optional<Users> byLoginId = userRepository.findByAccount(user.getAccount());
 
         if (byLoginId.isPresent()) {
             Users userCheck = byLoginId.get();
@@ -47,9 +47,9 @@ public class UserService {
     // 회원 개인 정보
     public Users updateForm(String myLoginId) {
 
-        Optional<Users> byLoginId = userRepository.findByLoginId(myLoginId);
+        Optional<Users> byAccount = userRepository.findByAccount(myLoginId);
 
-        return byLoginId.get();
+        return byAccount.get();
     }
 
     public Boolean update(Users user) {
@@ -60,11 +60,11 @@ public class UserService {
     }
 
     // 아이디/비번 찾기
-    public Users findIdPw(String userEmail) {
+    public Users findIdPw(String account) {
 
-        Optional<Users> byEmail = userRepository.findByEmail(userEmail);
+        Optional<Users> byAccount = userRepository.findByAccount(account);
 
-        return byEmail.orElse(null);
+        return byAccount.orElse(null);
     }
 
     // 회원 탈퇴
