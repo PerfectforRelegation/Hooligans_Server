@@ -10,18 +10,18 @@ public class Bets {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long betId;
+    private Long id;
 
     @Column(nullable = false)
-    private String betUserNick;
+    private String nick;
 
     @Column(nullable = false)
-    private String betMatch;
+    private String match;
 
     @Column(nullable = false)
-    private String betInfo;
+    private String info;
 
     @Column(columnDefinition = "integer default 0", nullable = false)
-    private int betCoin;
+    private int betPoint;
 
 }

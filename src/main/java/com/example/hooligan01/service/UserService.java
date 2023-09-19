@@ -21,7 +21,7 @@ public class UserService {
 
     public void join(Users user) {
 
-        Optional<Users> byUserLogId = userRepository.findByUserLogId(user.getUserLogId());
+        Optional<Users> byUserLogId = userRepository.findByLoginId(user.getLoginId());
 
         if (byUserLogId.isEmpty()) {
             userRepository.save(user);
@@ -30,11 +30,11 @@ public class UserService {
 
     public Users login(Users user) {
 
-        Optional<Users> byUserLogId = userRepository.findByUserLogId(user.getUserLogId());
+        Optional<Users> byLoginId = userRepository.findByLoginId(user.getLoginId());
 
-        if (byUserLogId.isPresent()) {
-            Users userCheck = byUserLogId.get();
-            if (userCheck.getUserPassword().equals(user.getUserPassword())) {
+        if (byLoginId.isPresent()) {
+            Users userCheck = byLoginId.get();
+            if (userCheck.getPassword().equals(user.getPassword())) {
                 return userCheck;
             } else {
                 return null;
@@ -45,11 +45,11 @@ public class UserService {
     }
 
     // 회원 개인 정보
-    public Users updateForm(String myLogId) {
+    public Users updateForm(String myLoginId) {
 
-        Optional<Users> byUserLogIn = userRepository.findByUserLogId(myLogId);
+        Optional<Users> byLoginId = userRepository.findByLoginId(myLoginId);
 
-        return byUserLogIn.get();
+        return byLoginId.get();
     }
 
     public Boolean update(Users user) {
@@ -62,13 +62,13 @@ public class UserService {
     // 아이디/비번 찾기
     public Users findIdPw(String userEmail) {
 
-        Optional<Users> byUserEmail = userRepository.findByUserEmail(userEmail);
+        Optional<Users> byEmail = userRepository.findByEmail(userEmail);
 
-        return byUserEmail.orElse(null);
+        return byEmail.orElse(null);
     }
 
     // 회원 탈퇴
-    public void deleteByUserId(Long userId) {
-        userRepository.deleteById(userId);
+    public void deleteByUserId(Long id) {
+        userRepository.deleteById(id);
     }
 }

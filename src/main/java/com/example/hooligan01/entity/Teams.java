@@ -10,8 +10,8 @@ public class Teams {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long TeamId;
+    private Long id;
 
     @Column(nullable = false)
-    private String TeamLeague;
+    private String league;
 }
