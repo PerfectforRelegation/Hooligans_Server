@@ -3,7 +3,6 @@ package com.example.hooligan01.controller;
 import com.example.hooligan01.entity.Users;
 import com.example.hooligan01.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
@@ -41,10 +40,10 @@ public class UserController {
         // 로그인 성공
         if (loginResult != null) {
 
-            session.setAttribute("userLogId", loginResult.getUserLogId());
-            session.setAttribute("userNick", loginResult.getUserNick());
+            session.setAttribute("loginId", loginResult.getLoginId());
+            session.setAttribute("nick", loginResult.getNick());
 
-            return loginResult.getUserLogId();
+            return loginResult.getLoginId();
         } else {
             return null;
         }
@@ -53,11 +52,11 @@ public class UserController {
     // 아이디 찾기(이메일과 비밀번호를 받음)
     @PostMapping("/findUserId")
     public Users userFindUserId(@RequestBody Users users) {
-        Users findIdResult = userService.findIdPw(users.getUserEmail());
+        Users findIdResult = userService.findIdPw(users.getEmail());
 
         if (findIdResult == null) {
             return null;
-        } else if (!findIdResult.getUserPassword().equals(users.getUserPassword())) {
+        } else if (!findIdResult.getPassword().equals(users.getPassword())) {
             return null;
         } else
             return findIdResult;
@@ -67,11 +66,11 @@ public class UserController {
     // 비밀번호 찾기(이메일과 아이디 받음)
     @PostMapping("/findUserPassword")
     public Users userFindUserPw(@RequestBody Users users) {
-        Users findIdResult = userService.findIdPw(users.getUserEmail());
+        Users findIdResult = userService.findIdPw(users.getEmail());
 
         if (findIdResult == null) {
             return null;
-        } else if (!findIdResult.getUserLogId().equals(users.getUserLogId())) {
+        } else if (!findIdResult.getLoginId().equals(users.getLoginId())) {
             return null;
         } else
              return findIdResult;
@@ -83,9 +82,9 @@ public class UserController {
     @GetMapping("/updateForm")
     public Users userUpdateForm(HttpSession session) {
 
-        String myLogId = (String) session.getAttribute("userLogId");
+        String myLoginId = (String) session.getAttribute("loginId");
 
-        return userService.updateForm(myLogId);
+        return userService.updateForm(myLoginId);
     }
 
     // 내 정보 수정(세션 안넣음)
@@ -96,10 +95,10 @@ public class UserController {
     }
 
     // 회원 탈퇴
-    @GetMapping("/delete/{userId}")
-    public Boolean deleteByUserId(@PathVariable Long userId) {
+    @GetMapping("/delete/{id}")
+    public Boolean deleteByUserId(@PathVariable Long id) {
 
-        userService.deleteByUserId(userId);
+        userService.deleteByUserId(id);
 
         return true;
     }

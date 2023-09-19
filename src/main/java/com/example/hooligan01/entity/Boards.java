@@ -12,25 +12,28 @@ public class Boards {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long boardId;
+    private Long id;
 
     @Column(nullable = false)
-    private String boardUserNick;
+    private String nick;
 
     @Column(nullable = false)
-    private String boardTitle;
+    private String title;
 
     @Column(nullable = false)
-    private String boardContent;
+    private String content;
 
     @Column(columnDefinition = "integer default 0", nullable = false)
-    private int boardLike;
+    private int heart;
 
     @Column(columnDefinition = "integer default 0", nullable = false)
-    private int boardUnlike;
+    private int hate;
 
     @Column(columnDefinition = "integer default 0", nullable = false)
-    private int boardView;
+    private int view;
+
+    @Column
+    private String modified;
 
     @CreationTimestamp
     @Column(nullable = false)

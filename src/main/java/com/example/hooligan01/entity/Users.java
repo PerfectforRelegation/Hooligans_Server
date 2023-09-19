@@ -10,35 +10,35 @@ public class Users {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    private Long id;
 
     @Column(nullable = false)
-    private String userName;
+    private String name;
 
     @Column(nullable = false)
-    private String userNick;
+    private String loginId;
 
     @Column(nullable = false)
-    private String userEmail;
+    private String password;
 
     @Column(nullable = false)
-    private String userLogId;
+    private String nick;
 
     @Column(nullable = false)
-    private String userPassword;
+    private String email;
 
     @Column(nullable = false)
-    private String userPhone;
+    private String phone;
 
     @Column(nullable = false)
-    private String userBirth;
+    private String birth;
 
-    @Column
-    private String userToken;
+//    @Column
+//    private String accessToken;
 
     @Column(columnDefinition = "integer default 0", nullable = false)
-    private int userCoin;
+    private int betPoint;
 
     @Column
-    private String userTeam;
+    private String team;
 }

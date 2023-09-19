@@ -13,18 +13,34 @@ public class BoardService {
     @Autowired
     BoardRepository boardRepository;
 
+    // 모든 게시글 리스트 출력
     public List<Boards> boardList() {
 
         return boardRepository.findAll();
     }
 
+    // 게시글 작성
     public void write(Boards board) {
 
         boardRepository.save(board);
     }
 
-    public Boards findByBoardId(Long boardId) {
+    // 게시글을 보드아이디를 통해 찾음
+    public Boards findByBoardId(Long id) {
 
-        return boardRepository.findByBoardId(boardId).get();
+        return boardRepository.findById(id).get();
+    }
+
+    // 게시글 업데이트
+    public Boolean update(Boards boards) {
+
+        boardRepository.save(boards);
+
+        return true;
+    }
+
+    // 게시글 삭제
+    public void deleteByBoardId(Long id) {
+        boardRepository.deleteById(id);
     }
 }
