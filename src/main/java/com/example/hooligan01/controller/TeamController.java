@@ -35,9 +35,9 @@ public class TeamController {
     @GetMapping("/table")
     public JSONObject leagueTable() throws Exception {
         JSONParser parser = new JSONParser();
-        Reader reader = new FileReader("/Users/mangon/PycharmProjects/web_crawling/premier-league.json");
+        Reader reader = new FileReader("/home/ubuntu/crawling_python/premier-league.json");
         JSONObject jsonObject = (JSONObject) parser.parse(reader);
-        
+
         return jsonObject;
     }
 
