@@ -33,6 +33,7 @@ public class BoardController {
     }
 
     // 게시글 상세보기(수정 및 삭제...?)
+    // 세션 값으로 비교 후 수정, 삭제 버튼이 생길 수 있도록 boolean 반환 값을 주어야 할까..?
     @GetMapping("/detail/{id}")
     public Boards boardDetail(@PathVariable Long id) {
 
@@ -46,7 +47,7 @@ public class BoardController {
     }
 
     // 게시글 수정(게시글 상세보기에서 수정 버튼을 누르는 식으로..?)
-    @GetMapping("updateForm/{id}")
+    @GetMapping("/updateForm/{id}")
     public Boards boardUpdateForm(@PathVariable Long id, HttpSession session) {
 
         String myNickname = (String) session.getAttribute("nickname");
@@ -61,7 +62,7 @@ public class BoardController {
     }
 
     // 게시글 수정(업데이트)
-    @PostMapping("update")
+    @PutMapping("/update")
     public Boolean update(@RequestBody Boards boards) {
 
         if (!boards.isModified())
@@ -71,7 +72,7 @@ public class BoardController {
     }
 
     // 게시글 삭제
-    @GetMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public Boolean deleteByBoardId(@PathVariable Long id, HttpSession session) {
 
         Boards boards = boardService.findByBoardId(id);

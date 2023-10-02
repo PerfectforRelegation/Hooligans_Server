@@ -19,13 +19,22 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public void join(Users user) {
+    public Users findById(Long id) {
+
+        Optional<Users> user = userRepository.findById(id);
+
+        return user.orElse(null);
+    }
+
+    public Boolean join(Users user) {
 
         Optional<Users> byUserAccount = userRepository.findByAccount(user.getAccount());
 
         if (byUserAccount.isEmpty()) {
             userRepository.save(user);
-        }
+            return true;
+        } else
+            return false;   // 어카운트 이미 존재
     }
 
     public Users login(Users user) {
@@ -44,13 +53,13 @@ public class UserService {
         }
     }
 
-    // 회원 개인 정보
-    public Users updateForm(String myLoginId) {
-
-        Optional<Users> byAccount = userRepository.findByAccount(myLoginId);
-
-        return byAccount.get();
-    }
+//    // 회원 개인 정보
+//    public Users updateForm(String myLoginId) {
+//
+//        Optional<Users> byAccount = userRepository.findByAccount(myLoginId);
+//
+//        return byAccount.get();
+//    }
 
     public Boolean update(Users user) {
 
@@ -71,4 +80,5 @@ public class UserService {
     public void deleteByUserId(Long id) {
         userRepository.deleteById(id);
     }
+
 }
