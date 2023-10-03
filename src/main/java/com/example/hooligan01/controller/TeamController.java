@@ -3,8 +3,12 @@ package com.example.hooligan01.controller;
 import com.example.hooligan01.entity.Teams;
 import com.example.hooligan01.service.TeamService;
 import lombok.RequiredArgsConstructor;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileReader;
+import java.io.Reader;
 import java.util.List;
 
 @RestController
@@ -26,6 +30,15 @@ public class TeamController {
     public Boolean teamInsert(@RequestBody Teams team) {
 
         return teamService.teamInsert(team);
+    }
+
+    @GetMapping("/table")
+    public JSONObject leagueTable() throws Exception {
+        JSONParser parser = new JSONParser();
+        Reader reader = new FileReader("/home/ubuntu/crawling_python/premier-league.json");
+        JSONObject jsonObject = (JSONObject) parser.parse(reader);
+
+        return jsonObject;
     }
 
 
