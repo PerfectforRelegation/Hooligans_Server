@@ -1,6 +1,6 @@
 package com.example.hooligan01.chatController;
 
-import com.example.hooligan01.dto.ChatRoom;
+import com.example.hooligan01.chatDto.ChatRoom;
 import com.example.hooligan01.repository.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +19,12 @@ public class ChatRoomController {
     public List<ChatRoom> rooms() {
 
         return chatRoomRepository.findAllRoom();
+    }
+
+    @GetMapping("/room/{roomId}")
+    public ChatRoom chatRoom(@PathVariable String roomId) {
+
+        return chatRoomRepository.findRoomById(roomId);
     }
 
     // 채팅방 생성

@@ -1,5 +1,6 @@
 package com.example.hooligan01.service;
 
+import com.example.hooligan01.dto.BoardsDTO;
 import com.example.hooligan01.entity.Boards;
 import com.example.hooligan01.repository.BoardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +15,15 @@ public class BoardService {
     BoardRepository boardRepository;
 
     // 모든 게시글 리스트 출력
-    public List<Boards> boardList() {
+//    public List<Boards> boardList() {
+//
+//        return boardRepository.findAll();
+//    }
 
-        return boardRepository.findAll();
+    // 게시글 출력
+    public List<BoardsDTO> findAllWithNickName() {
+
+        return boardRepository.findAllWithNickname();
     }
 
     // 게시글 작성
@@ -43,4 +50,5 @@ public class BoardService {
     public void deleteByBoardId(Long id) {
         boardRepository.deleteById(id);
     }
+
 }

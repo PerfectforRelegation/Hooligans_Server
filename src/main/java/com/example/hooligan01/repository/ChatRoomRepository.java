@@ -1,6 +1,6 @@
 package com.example.hooligan01.repository;
 
-import com.example.hooligan01.dto.ChatRoom;
+import com.example.hooligan01.chatDto.ChatRoom;
 import com.example.hooligan01.pubsub.RedisSubscriber;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.HashOperations;
@@ -10,7 +10,6 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,9 +46,9 @@ public class ChatRoomRepository {
         return opsHashChatRoom.values(CHAT_ROOMS);
     }
 
-//    public ChatRoom findRoomById(String id) {
-//        return opsHashChatRoom.get(id, id);
-//    }
+    public ChatRoom findRoomById(String id) {
+        return opsHashChatRoom.get(CHAT_ROOMS, id);
+    }
 
     /**
      * 채팅방 생성 : 서버간 채팅방 공유를 위해 redis hash 에 저장한다.

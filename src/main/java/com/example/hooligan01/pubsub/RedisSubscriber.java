@@ -1,6 +1,6 @@
 package com.example.hooligan01.pubsub;
 
-import com.example.hooligan01.dto.ChatMessage;
+import com.example.hooligan01.chatDto.ChatMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

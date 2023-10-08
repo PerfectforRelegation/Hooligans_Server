@@ -3,6 +3,8 @@ package com.example.hooligan01.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -10,6 +12,7 @@ public class Users {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Long id;
 
     @Column(nullable = false)
@@ -44,4 +47,20 @@ public class Users {
 
     @Column(columnDefinition = "integer default 0", nullable = false)
     private int betPoint;
+
+    @OneToMany(mappedBy = "user")
+    private List<Boards> boards = new ArrayList<>();
+
+    public void addBoard(Boards board) {
+        this.boards.add(board);
+        board.setUser(this);
+    }
+
+    @OneToMany(mappedBy = "heartUsers")
+    private List<Heart> hearts = new ArrayList<>();
+
+    public void addHeart(Heart heart) {
+        this.hearts.add(heart);
+        heart.setHeartUsers(this);
+    }
 }

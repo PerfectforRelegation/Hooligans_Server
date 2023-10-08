@@ -1,4 +1,4 @@
-package com.example.hooligan01.dto;
+package com.example.hooligan01.chatDto;
 
 import lombok.Data;
 import lombok.Getter;

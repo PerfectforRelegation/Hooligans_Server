@@ -19,6 +19,13 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    public Users findByNickname(String nickname) {
+
+        Optional<Users> user = userRepository.findByNickname(nickname);
+
+        return user.get();
+    }
+
     public Users findById(Long id) {
 
         Optional<Users> user = userRepository.findById(id);
@@ -29,8 +36,9 @@ public class UserService {
     public Boolean join(Users user) {
 
         Optional<Users> byUserAccount = userRepository.findByAccount(user.getAccount());
+        Optional<Users> byUserNickname = userRepository.findByNickname(user.getNickname());
 
-        if (byUserAccount.isEmpty()) {
+        if (byUserAccount.isEmpty() && byUserNickname.isEmpty()) {
             userRepository.save(user);
             return true;
         } else
