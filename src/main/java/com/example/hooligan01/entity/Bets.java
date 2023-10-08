@@ -16,7 +16,7 @@ public class Bets {
     private String nickname;
 
     @Column(nullable = false)
-    private String match;
+    private String matches;
 
     @Column(nullable = false)
     private String info;
