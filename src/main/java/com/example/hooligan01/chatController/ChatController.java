@@ -1,15 +1,12 @@
 package com.example.hooligan01.chatController;
 
-import com.example.hooligan01.dto.ChatMessage;
+import com.example.hooligan01.chatDto.ChatMessage;
 import com.example.hooligan01.pubsub.RedisPublisher;
 import com.example.hooligan01.repository.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.socket.WebSocketSession;
-
-import javax.servlet.http.HttpSession;
 
 @Controller
 @RequiredArgsConstructor

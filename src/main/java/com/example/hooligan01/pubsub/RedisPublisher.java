@@ -1,6 +1,6 @@
 package com.example.hooligan01.pubsub;
 
-import com.example.hooligan01.dto.ChatMessage;
+import com.example.hooligan01.chatDto.ChatMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;

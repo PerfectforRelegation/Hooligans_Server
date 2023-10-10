@@ -22,6 +22,15 @@ public class UserController {
         return userService.userList();
     }
 
+    /***/
+    // 유저 한 명의 정보
+    @GetMapping("/{id}")
+    public Users userInfo(@PathVariable Long id) {
+
+        return userService.findById(id);
+    }
+    /***/
+  
     // 유저 디테일
     @GetMapping("/detail/{id}")
     public Users userDetail(@PathVariable Long id, HttpSession session) {
@@ -65,7 +74,7 @@ public class UserController {
 
     // 아이디 찾기(이메일과 비밀번호를 받음)
     // 수정 필요!!
-    @PostMapping("/findUserId")
+    @PostMapping("/findId")
     public Users userFindUserId(@RequestBody Users users) {
         Users findIdResult = userService.findIdPw(users.getAccount());
 
@@ -78,15 +87,15 @@ public class UserController {
 
     }
 
-    // 비밀번호 찾기(이메일과 아이디 받음)
+    // 비밀번호 찾기(이메일과 전화번호를 받음)
     // 수정 필요!!
-    @PostMapping("/findUserPassword")
+    @PostMapping("/findPassword")
     public Users userFindUserPw(@RequestBody Users users) {
         Users findIdResult = userService.findIdPw(users.getAccount());
 
         if (findIdResult == null) {
             return null;
-        } else if (!findIdResult.getAccount().equals(users.getAccount())) {
+        } else if (!findIdResult.getPhoneNumber().equals(users.getPhoneNumber())) {
             return null;
         } else
              return findIdResult;
