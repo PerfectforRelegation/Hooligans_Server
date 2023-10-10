@@ -30,7 +30,7 @@ public class UserController {
         return userService.findById(id);
     }
     /***/
-
+  
     // 유저 디테일
     @GetMapping("/detail/{id}")
     public Users userDetail(@PathVariable Long id, HttpSession session) {
