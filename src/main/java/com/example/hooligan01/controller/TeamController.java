@@ -41,5 +41,14 @@ public class TeamController {
         return jsonObject;
     }
 
+    /*@GetMapping(
+            value = "/get-image-with-media-type",
+            produces = MediaType.IMAGE_JPEG_VALUE
+    )
+    public @ResponseBody byte[] getImageWithMediaType() throws IOException {
+        InputStream in = getClass().getResourceAsStream("/com/baeldung/produceimage/image.jpg");
+        return IOUtils.toByteArray(in);
+    }*/
+
 
 }
