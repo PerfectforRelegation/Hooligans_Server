@@ -46,7 +46,7 @@ public class Boards {
     private LocalDate boardDate;
 
     @OneToMany(mappedBy = "heartBoards")
-    private List<Heart> hearts = new ArrayList<>();
+    private List<Heart> hearts;
 
     public void addHeart(Heart heart) {
         this.hearts.add(heart);
