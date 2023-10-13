@@ -57,9 +57,6 @@ public class ChatRoomRepository {
 
         ChatRoom chatRoom = ChatRoom.create(name);
 
-//        System.out.println("roomId = " + chatRoom.getRoomId());
-//        System.out.println("name = " + name);
-
         opsHashChatRoom.put(CHAT_ROOMS, chatRoom.getRoomId(), chatRoom);
 
 //        Map<String, ChatRoom> d = opsHashChatRoom.entries(CHAT_ROOMS);

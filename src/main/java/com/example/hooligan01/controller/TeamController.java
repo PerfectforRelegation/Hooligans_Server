@@ -37,7 +37,7 @@ public class TeamController {
         JSONParser parser = new JSONParser();
         Reader reader = new FileReader("/home/ubuntu/crawling_python/premier-league.json");
         JSONObject jsonObject = (JSONObject) parser.parse(reader);
-
+        
         return jsonObject;
     }
 

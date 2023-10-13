@@ -1,5 +1,7 @@
 package com.example.hooligan01.chatDto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +13,7 @@ import java.io.Serializable;
 @Setter
 @Getter
 @NoArgsConstructor
-public class ChatMessage implements Serializable {
+public class ChatMessage {
 
     public enum MessageType {
         ENTER, TALK;
@@ -22,18 +24,4 @@ public class ChatMessage implements Serializable {
     private String sender;
     private String message;
 
-    /* ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ */
-
-//    @JsonCreator
-//    public ChatMessage(
-//            @JsonProperty("type") MessageType type,
-//            @JsonProperty("roomId") String roomId,
-//            @JsonProperty("type") String sender,
-//            @JsonProperty("type") String message) {
-//
-//        this.type = type;
-//        this.roomId = roomId;
-//        this.sender = sender;
-//        this.message = message;
-//    }
 }
