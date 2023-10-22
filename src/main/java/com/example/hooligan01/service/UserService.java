@@ -1,19 +1,29 @@
 package com.example.hooligan01.service;
 
+import com.example.hooligan01.dto.SignResponse;
+import com.example.hooligan01.entity.Authorities;
 import com.example.hooligan01.entity.Users;
 import com.example.hooligan01.repository.UserRepository;
-import lombok.AllArgsConstructor;
+import com.example.hooligan01.security.JwtProvider;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtProvider jwtProvider;
+
 
     public List<Users> userList() {
 
@@ -27,7 +37,7 @@ public class UserService {
         return user.get();
     }
 
-    public Users findById(Long id) {
+    public Users findById(UUID id) {
 
         Optional<Users> user = userRepository.findById(id);
 
@@ -77,7 +87,7 @@ public class UserService {
         return true;
     }
 
-    // 아이디/비번 찾기
+    // 비번 찾기
     public Users findIdPw(String account) {
 
         Optional<Users> byAccount = userRepository.findByAccount(account);
@@ -86,8 +96,57 @@ public class UserService {
     }
 
     // 회원 탈퇴
-    public void deleteByUserId(Long id) {
+    public void deleteByUserId(UUID id) {
         userRepository.deleteById(id);
     }
+
+    // 아이디 찾기
+    public Users findByNameAndBirth(String name, String birth) {
+
+        Optional<Users> findUser = userRepository.findByNameAndBirth(name, birth);
+
+        return findUser.orElse(null);
+    }
+
+    // test ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+    public boolean joinTest(Users user) throws Exception {
+        try {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+            // 주어진 요소로 구성된 불변 리스트를 생성할 때 사용(Collections.singletonList())
+            // 이 리스트는 변경할 수 없고, 주로 하나의 요소를 가지는 간단한 리스트를 만들 때 사용
+            user.setRoles(Collections.singletonList(Authorities.builder().name("ROLE_USER").build()));
+
+            userRepository.save(user);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw new Exception("잘못된 요청입니다.");
+        }
+
+        return true;
+    }
+
+    public SignResponse loginTest(Users user) throws Exception {
+        Users userGet = userRepository.findByAccount(user.getAccount())
+                .orElseThrow(() -> new BadCredentialsException("잘못된 계정정보입니다."));
+
+        if (!passwordEncoder.matches(user.getPassword(), userGet.getPassword())) {
+            throw new BadCredentialsException("잘못된 계정정보입니다.");
+        }
+
+        return SignResponse.builder()
+                .id(userGet.getId())
+                .name(userGet.getName())
+                .account(userGet.getAccount())
+                .password(userGet.getPassword())
+                .nickname(userGet.getNickname())
+                .phoneNumber(userGet.getPhoneNumber())
+                .birth(userGet.getBirth())
+                .betPoint(userGet.getBetPoint())
+                .roles(userGet.getRoles())
+                .token(jwtProvider.createToken(userGet.getAccount(), userGet.getRoles()))
+                .build();
+    }
+
 
 }

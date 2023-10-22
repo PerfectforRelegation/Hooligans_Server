@@ -77,10 +77,14 @@ public class BoardController {
 
     // 게시글 수정(업데이트)
     @PutMapping("/update")
-    public Boolean update(@RequestBody Boards boards) {
+    public Boolean update(@RequestBody Boards boards, HttpSession session) {
 
         if (!boards.isModified())
             boards.setModified(true);
+
+        Users user = userService.findByNickname((String) session.getAttribute("nickname"));
+
+        boards.setUser(user);
 
         return boardService.update(boards);
     }

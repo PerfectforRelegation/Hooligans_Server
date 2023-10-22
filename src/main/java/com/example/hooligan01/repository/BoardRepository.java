@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface BoardRepository extends JpaRepository<Boards, Long> {
 
-    Optional<Boards> findById(Long board_id);
+    Optional<Boards> findById(Long id);
 
     @Query("SELECT new com.example.hooligan01.dto.BoardsDTO(b.id, u.nickname, b.title, b.content, b.heartCount, " +
             "b.view, b.modified, b.boardDate) FROM Boards b JOIN b.user u")
