@@ -27,7 +27,7 @@ public class GameController {
     @GetMapping("/test")
     public boolean leagueTable() throws Exception {
         JSONParser parser = new JSONParser();
-        Reader reader = new FileReader("/C:/Users/jody8/OneDrive/바탕 화면/premier-league_fixtures.json");
+        Reader reader = new FileReader("/home/ubuntu/crawling_python/fixtures.json");
         JSONObject jsonObject = (JSONObject) parser.parse(reader);
 
         gameService.testSave(jsonObject);
