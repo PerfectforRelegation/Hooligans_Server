@@ -25,7 +25,6 @@ public class RedisSubscriber implements MessageListener {
     public void onMessage(Message message, byte[] pattern) {
 
         try {
-
             // redis 에서 발행된 데이터를 받아 역직렬화
             String publishMessage = (String) redisTemplate.getStringSerializer().deserialize(message.getBody());
 
@@ -33,7 +32,7 @@ public class RedisSubscriber implements MessageListener {
             ChatMessage roomMessage = objectMapper.readValue(publishMessage, ChatMessage.class);
 
             // 웹소켓 구독자에게 채팅 메시지 전송
-            messagingTemplate.convertAndSend("/sub/chat/room" + roomMessage.getRoomId(), roomMessage);
+            messagingTemplate.convertAndSend("/sub/chat/room/" + roomMessage.getRoomId(), roomMessage);
 
         } catch (Exception e) {
 

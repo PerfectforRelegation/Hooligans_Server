@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +13,7 @@ import java.util.UUID;
 @Entity
 @Data
 @Builder @AllArgsConstructor @NoArgsConstructor
+
 public class Users {
 
     @Id @GeneratedValue(generator = "uuid2")

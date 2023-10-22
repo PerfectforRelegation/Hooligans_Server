@@ -24,6 +24,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
 
+
     public List<Users> userList() {
 
         return userRepository.findAll();
