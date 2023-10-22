@@ -1,27 +1,45 @@
 package com.example.hooligan01.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Data
 public class Bets {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Id @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(name = "bet_id", columnDefinition = "BINARY(16)")
+    private UUID id;
 
-    @Column(nullable = false)
-    private String nickname;
+//    @OneToMany(mappedBy = "betInfo")
+//    private List<Users> userInfo;
 
-    @Column(nullable = false)
-    private String matches;
+    @JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "game_id")
+    private Games games;
 
-    @Column(nullable = false)
-    private String info;
+    @OneToMany(mappedBy = "bets")
+    private List<Points> points = new ArrayList<>();
+
+    public void addPoint(Points point) {
+        this.points.add(point);
+        point.setBets(this);
+    }
 
     @Column(columnDefinition = "integer default 0", nullable = false)
-    private int betPoint;
+    private int homePoint;
 
+    @Column(columnDefinition = "integer default 0", nullable = false)
+    private int awayPoint;
+
+    @Column
+    private String win;
 }

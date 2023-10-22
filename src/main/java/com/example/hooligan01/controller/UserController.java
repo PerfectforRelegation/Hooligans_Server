@@ -1,12 +1,16 @@
 package com.example.hooligan01.controller;
 
+import com.example.hooligan01.dto.SignResponse;
 import com.example.hooligan01.entity.Users;
 import com.example.hooligan01.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,7 +29,7 @@ public class UserController {
     /***/
     // 유저 한 명의 정보
     @GetMapping("/{id}")
-    public Users userInfo(@PathVariable Long id) {
+    public Users userInfo(@PathVariable UUID id) {
 
         return userService.findById(id);
     }
@@ -33,7 +37,7 @@ public class UserController {
 
     // 유저 디테일
     @GetMapping("/detail/{id}")
-    public Users userDetail(@PathVariable Long id, HttpSession session) {
+    public Users userDetail(@PathVariable UUID id, HttpSession session) {
 
         Users user = userService.findById(id);
 
@@ -72,18 +76,12 @@ public class UserController {
         }
     }
 
-    // 아이디 찾기(이메일과 비밀번호를 받음)
+    // 아이디 찾기(이름과 생일를 받음)
     // 수정 필요!!
     @PostMapping("/findId")
-    public Users userFindUserId(@RequestBody Users users) {
-        Users findIdResult = userService.findIdPw(users.getAccount());
+    public Users userFindUserId(@RequestBody Users user) {
 
-        if (findIdResult == null) {
-            return null;
-        } else if (!findIdResult.getPassword().equals(users.getPassword())) {
-            return null;
-        } else
-            return findIdResult;
+        return userService.findByNameAndBirth(user.getName(), user.getBirth());
 
     }
 
@@ -120,7 +118,7 @@ public class UserController {
 
     // 회원 탈퇴
     @DeleteMapping("/{id}")
-    public Boolean deleteByUserId(@PathVariable Long id) {
+    public Boolean deleteByUserId(@PathVariable UUID id) {
 
         userService.deleteByUserId(id);
 
@@ -136,4 +134,14 @@ public class UserController {
         return true;
     }
 
+    // test ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+    @PostMapping("/testLogin")
+    public ResponseEntity<SignResponse> login(@RequestBody Users user) throws Exception {
+        return new ResponseEntity<>(userService.loginTest(user), HttpStatus.OK);
+    }
+
+    @PostMapping("/testJoin")
+    public ResponseEntity<Boolean> join(@RequestBody Users user) throws Exception {
+        return new ResponseEntity<>(userService.joinTest(user), HttpStatus.OK);
+    }
 }

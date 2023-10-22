@@ -22,8 +22,6 @@ public class ChatController {
     @MessageMapping("/chat/message")
     public void message(@Payload ChatMessage chatMessage) {
 
-        // System.out.println(chatMessage.getMessage().toString());
-
         if (ChatMessage.MessageType.ENTER.equals(chatMessage.getType())) {
 
             chatRoomRepository.enterChatRoom(chatMessage.getRoomId());
