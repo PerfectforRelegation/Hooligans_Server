@@ -1,7 +1,11 @@
 package com.example.hooligan01.service;
 
+import com.example.hooligan01.dto.Message;
 import com.example.hooligan01.entity.Teams;
 import com.example.hooligan01.repository.TeamRepository;
+import lombok.RequiredArgsConstructor;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,10 +13,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class TeamService {
 
-    @Autowired
-    private TeamRepository teamRepository;
+    private final TeamRepository teamRepository;
 
     // 팀 리스트
     public List<Teams> teamList() {
@@ -20,15 +24,36 @@ public class TeamService {
         return teamRepository.findAll();
     }
 
-    // 팀 데이터 넣기
-    public Boolean teamInsert(Teams team) {
+    public Message teamSave(JSONObject jsonObject) {
 
-        Optional<Teams> byLeague = teamRepository.findByLeague(team.getLeague());
+        try {
+            JSONArray leagueTable = (JSONArray) jsonObject.get("leaguetable");
 
-        if (byLeague.isEmpty()) {
-            teamRepository.save(team);
-            return true;
-        } else
-            return false;
+            for (Object team : leagueTable) {
+
+                JSONObject teamInfo = (JSONObject) team;
+
+                Teams inputTeam = Teams.builder()
+                        .teamId((String) teamInfo.get("teamid"))
+                        .teamName((String) teamInfo.get("teamname"))
+                        .teamLogo((String) teamInfo.get("team_logo"))
+                        .played(Integer.parseInt((String) teamInfo.get("played")))
+                        .won(Integer.parseInt((String) teamInfo.get("won")))
+                        .drawn(Integer.parseInt((String) teamInfo.get("drawn")))
+                        .lost(Integer.parseInt((String) teamInfo.get("lost")))
+                        .gf(Integer.parseInt((String) teamInfo.get("gf")))
+                        .ga(Integer.parseInt((String) teamInfo.get("ga")))
+                        .gd(Integer.parseInt((String) teamInfo.get("gd")))
+                        .points(Integer.parseInt((String) teamInfo.get("points")))
+                        .build();
+
+                teamRepository.save(inputTeam);
+            }
+
+            return Message.builder().message("팀 저장 완료").build();
+        } catch (Exception e) {
+            return Message.builder().message("팀 저장 안됨 " + e).build();
+        }
     }
+
 }

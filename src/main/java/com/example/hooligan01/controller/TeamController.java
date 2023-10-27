@@ -1,5 +1,6 @@
 package com.example.hooligan01.controller;
 
+import com.example.hooligan01.dto.Message;
 import com.example.hooligan01.entity.Teams;
 import com.example.hooligan01.service.TeamService;
 import lombok.RequiredArgsConstructor;
@@ -19,26 +20,20 @@ public class TeamController {
     private final TeamService teamService;
 
     // 팀 리스트
-    @GetMapping("/teamList")
+    @GetMapping("/list")
     public List<Teams> teamsList() {
 
         return teamService.teamList();
     }
 
-    // 팀 데이터 넣기
-    @PostMapping("/teamInsert")
-    public Boolean teamInsert(@RequestBody Teams team) {
-
-        return teamService.teamInsert(team);
-    }
 
     @GetMapping("/table")
-    public JSONObject leagueTable() throws Exception {
+    public Message leagueTable() throws Exception {
         JSONParser parser = new JSONParser();
         Reader reader = new FileReader("/home/ubuntu/crawling_python/premier-league.json");
         JSONObject jsonObject = (JSONObject) parser.parse(reader);
-        
-        return jsonObject;
+
+        return teamService.teamSave(jsonObject);
     }
 
     /*@GetMapping(

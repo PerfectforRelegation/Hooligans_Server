@@ -5,14 +5,11 @@ import com.example.hooligan01.entity.Boards;
 import com.example.hooligan01.entity.Users;
 import com.example.hooligan01.security.UserDetailsImpl;
 import com.example.hooligan01.service.BoardService;
-import com.example.hooligan01.service.UserDetailsServiceImpl;
 import com.example.hooligan01.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @RestController
@@ -22,8 +19,6 @@ public class BoardController {
 
     private final BoardService boardService;
     private final UserService userService;
-
-    private final UserDetailsServiceImpl userDetailsService;
 
     @GetMapping("/list")
     public List<BoardsDTO> getAllBoards() {
@@ -60,13 +55,13 @@ public class BoardController {
 
     // 게시글 수정(게시글 상세보기에서 수정 버튼을 누르는 식으로..?)
     @GetMapping("/updateForm/{id}")
-    public Boards boardUpdateForm(@PathVariable Long id, HttpSession session) {
+    public Boards boardUpdateForm(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        String myNickname = (String) session.getAttribute("nickname");
+        Users user = userDetails.getUser();
 
         Boards boards = boardService.findByBoardId(id);
 
-        if (boards.getUser().getNickname().equals(myNickname)) {
+        if (boards.getUser().getNickname().equals(user.getNickname())) {
             return boards;
         } else {
             return null;
@@ -75,25 +70,25 @@ public class BoardController {
 
     // 게시글 수정(업데이트)
     @PutMapping("/update")
-    public Boolean update(@RequestBody Boards boards, HttpSession session) {
+    public Boolean update(@RequestBody Boards boards) {
 
         if (!boards.isModified())
             boards.setModified(true);
 
-        Users user = userService.findByNickname((String) session.getAttribute("nickname"));
-
-        boards.setUser(user);
+//        Users user = userService.findByNickname((String) session.getAttribute("nickname"));
+//
+//        boards.setUser(user);
 
         return boardService.update(boards);
     }
 
     // 게시글 삭제
     @DeleteMapping("/{id}")
-    public Boolean deleteByBoardId(@PathVariable Long id, HttpSession session) {
+    public Boolean deleteByBoardId(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         Boards boards = boardService.findByBoardId(id);
 
-        String myNickname = (String) session.getAttribute("nickname");
+        String myNickname = userDetails.getUser().getNickname();
 
         if (boards.getUser().getNickname().equals(myNickname)) {
             boardService.deleteByBoardId(id);

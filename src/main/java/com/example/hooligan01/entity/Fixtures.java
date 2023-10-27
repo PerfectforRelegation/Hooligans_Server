@@ -23,23 +23,25 @@ public class Fixtures {
     private String league;
 
     @Column(nullable = false)
-    private String homeTeam;
+    private LocalDate date;
 
     @Column(nullable = false)
-    private String awayTeam;
+    private String home;
 
-    @Column(columnDefinition = "integer default 0", nullable = false)
+    @Column(nullable = false)
+    private String away;
+
+    @Column(nullable = false)
+    private String stadium;
+
+    @Column
+    private boolean isLive;
+
+    @Column(nullable = false)
     private int homeScore;
 
-    @Column(columnDefinition = "integer default 0", nullable = false)
-    private int awayScore;
-
-//    @Column(nullable = false)
-//    private String location;
-
-    // @CreationTimestamp
     @Column(nullable = false)
-    private LocalDate date;
+    private int awayScore;
 
     @Column
     private String time;
@@ -48,11 +50,15 @@ public class Fixtures {
     private Bets bets;
 
     @Builder
-    public Fixtures(String league, String homeTeam, String awayTeam, LocalDate date, String time) {
+    public Fixtures(String league, LocalDate date, String home, String away, String stadium, boolean isLive, int homeScore, int awayScore, String time) {
         this.league = league;
-        this.homeTeam = homeTeam;
-        this.awayTeam = awayTeam;
         this.date = date;
+        this.home = home;
+        this.away = away;
+        this.stadium = stadium;
+        this.isLive = isLive;
+        this.homeScore = homeScore;
+        this.awayScore = awayScore;
         this.time = time;
     }
 }

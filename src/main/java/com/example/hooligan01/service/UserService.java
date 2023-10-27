@@ -13,6 +13,8 @@ import com.example.hooligan01.entity.Users;
 import com.example.hooligan01.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -56,7 +58,7 @@ public class UserService {
         if (userRepository.findByAccount(inputUser.getAccount()).isPresent()) {
 //            throw new RuntimeException("Overlap Check");
             return Message.builder()
-                    .message("아이디 없음")
+                    .message("아이디 중복")
                     .build();
         }
 
@@ -68,13 +70,21 @@ public class UserService {
                 .build();
     }
 
-    public LoginResponse login(Users inputUser, HttpServletResponse response) {
+    public ResponseEntity<Object> login(Users inputUser, HttpServletResponse response) {
 
-        Users user = userRepository.findByAccount(inputUser.getAccount()).orElseThrow(
-                () -> new RuntimeException("Not found Account"));
+        Users user;
+
+        Optional<Users> userCheck = userRepository.findByAccount(inputUser.getAccount());
+
+        if (userCheck.isEmpty()) {
+            Message message = new Message("아이디 없음");
+            return new ResponseEntity<>(message, HttpStatus.OK);
+        } else
+            user = userCheck.get();
 
         if (!passwordEncoder.matches(inputUser.getPassword(), user.getPassword())) {
-            throw new RuntimeException("No matches Password");
+            Message message = new Message("비밀번호 불일치");
+            return new ResponseEntity<>(message, HttpStatus.OK);
         }
 
         TokenDto tokenDto = jwtUtil.createAllToken(user.getAccount());
@@ -94,7 +104,7 @@ public class UserService {
         // response 헤더에 Access Token / Refresh Token 넣음
         setHeader(response, tokenDto);
 
-        return LoginResponse.builder()
+        LoginResponse loginResponse =  LoginResponse.builder()
                 .id(user.getId())
                 .name(user.getName())
                 .account(user.getAccount())
@@ -108,6 +118,8 @@ public class UserService {
                 .thirdTeam(user.getThirdTeam())
                 .tokenDto(tokenDto)
                 .build();
+
+        return new ResponseEntity<>(loginResponse, HttpStatus.OK);
     }
 
     private void setHeader(HttpServletResponse response, TokenDto tokenDto) {
