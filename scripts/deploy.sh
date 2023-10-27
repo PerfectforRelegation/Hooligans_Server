@@ -1,3 +1,5 @@
+#!/bin/bash
+
 REPOSITORY=/home/ubuntu/Hooligans_Server
 cd $REPOSITORY
 
