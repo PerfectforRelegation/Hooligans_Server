@@ -1,17 +1,22 @@
 package com.example.hooligan01.service;
 
-import com.example.hooligan01.dto.SignResponse;
-import com.example.hooligan01.entity.Authorities;
+import com.example.hooligan01.dto.LoginResponse;
+import com.example.hooligan01.security.JwtUtil;
+import com.example.hooligan01.entity.RefreshToken;
+import com.example.hooligan01.repository.RefreshTokenRepository;
+
+import com.example.hooligan01.dto.TokenDto;
+
 import com.example.hooligan01.entity.Users;
+
 import com.example.hooligan01.repository.UserRepository;
-import com.example.hooligan01.security.JwtProvider;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
+import javax.servlet.http.HttpServletResponse;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -22,7 +27,8 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtProvider jwtProvider;
+    private final JwtUtil jwtUtil;
+    private final RefreshTokenRepository refreshTokenRepository;
 
 
     public List<Users> userList() {
@@ -44,32 +50,63 @@ public class UserService {
         return user.orElse(null);
     }
 
-    public Boolean join(Users user) {
+    public Boolean join(Users inputUser) throws Exception {
 
-        Optional<Users> byUserAccount = userRepository.findByAccount(user.getAccount());
-        Optional<Users> byUserNickname = userRepository.findByNickname(user.getNickname());
+        if (userRepository.findByAccount(inputUser.getAccount()).isPresent()) {
+            throw new RuntimeException("Overlap Check");
+        }
 
-        if (byUserAccount.isEmpty() && byUserNickname.isEmpty()) {
-            userRepository.save(user);
-            return true;
-        } else
-            return false;   // 어카운트 이미 존재
+        inputUser.setPassword(passwordEncoder.encode(inputUser.getPassword()));
+
+        userRepository.save(inputUser);
+        return true;
     }
 
-    public Users login(Users user) {
+    public LoginResponse login(Users inputUser, HttpServletResponse response) {
 
-        Optional<Users> byUserAccount = userRepository.findByAccount(user.getAccount());
+        Users user = userRepository.findByAccount(inputUser.getAccount()).orElseThrow(
+                () -> new RuntimeException("Not found Account"));
 
-        if (byUserAccount.isPresent()) {
-            Users userCheck = byUserAccount.get();
-            if (userCheck.getPassword().equals(user.getPassword())) {
-                return userCheck;
-            } else {
-                return null;
-            }
-        } else {
-            return null;
+        if (!passwordEncoder.matches(inputUser.getPassword(), user.getPassword())) {
+            throw new RuntimeException("No matches Password");
         }
+
+        TokenDto tokenDto = jwtUtil.createAllToken(user.getAccount());
+
+        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByUsersAccount(user.getAccount());
+
+        // 있다면 새토큰 발급후 업데이트
+        // 없다면 새로 만들고 디비 저장
+        if(refreshToken.isPresent()) {
+            refreshTokenRepository.save(refreshToken.get().updateToken(tokenDto.getAccessToken(), tokenDto.getRefreshToken()));
+        } else {
+            RefreshToken newToken = new RefreshToken(tokenDto.getAccessToken(), tokenDto.getRefreshToken(), user);
+            refreshTokenRepository.save(newToken);
+            user.setToken(newToken);
+        }
+
+        // response 헤더에 Access Token / Refresh Token 넣음
+        setHeader(response, tokenDto);
+
+        return LoginResponse.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .account(user.getAccount())
+                .password(user.getPassword())
+                .nickname(user.getNickname())
+                .phoneNumber(user.getPhoneNumber())
+                .birth(user.getBirth())
+                .betPoint(user.getBetPoint())
+                .firstTeam(user.getFirstTeam())
+                .secondTeam(user.getSecondTeam())
+                .thirdTeam(user.getThirdTeam())
+                .tokenDto(tokenDto)
+                .build();
+    }
+
+    private void setHeader(HttpServletResponse response, TokenDto tokenDto) {
+        response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
+        response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
     }
 
 //    // 회원 개인 정보
@@ -107,46 +144,5 @@ public class UserService {
 
         return findUser.orElse(null);
     }
-
-    // test ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-    public boolean joinTest(Users user) throws Exception {
-        try {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-            // 주어진 요소로 구성된 불변 리스트를 생성할 때 사용(Collections.singletonList())
-            // 이 리스트는 변경할 수 없고, 주로 하나의 요소를 가지는 간단한 리스트를 만들 때 사용
-            user.setRoles(Collections.singletonList(Authorities.builder().name("ROLE_USER").build()));
-
-            userRepository.save(user);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            throw new Exception("잘못된 요청입니다.");
-        }
-
-        return true;
-    }
-
-    public SignResponse loginTest(Users user) throws Exception {
-        Users userGet = userRepository.findByAccount(user.getAccount())
-                .orElseThrow(() -> new BadCredentialsException("잘못된 계정정보입니다."));
-
-        if (!passwordEncoder.matches(user.getPassword(), userGet.getPassword())) {
-            throw new BadCredentialsException("잘못된 계정정보입니다.");
-        }
-
-        return SignResponse.builder()
-                .id(userGet.getId())
-                .name(userGet.getName())
-                .account(userGet.getAccount())
-                .password(userGet.getPassword())
-                .nickname(userGet.getNickname())
-                .phoneNumber(userGet.getPhoneNumber())
-                .birth(userGet.getBirth())
-                .betPoint(userGet.getBetPoint())
-                .roles(userGet.getRoles())
-                .token(jwtProvider.createToken(userGet.getAccount(), userGet.getRoles()))
-                .build();
-    }
-
 
 }

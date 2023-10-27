@@ -3,9 +3,13 @@ package com.example.hooligan01.controller;
 import com.example.hooligan01.dto.BoardsDTO;
 import com.example.hooligan01.entity.Boards;
 import com.example.hooligan01.entity.Users;
+import com.example.hooligan01.security.UserDetailsImpl;
 import com.example.hooligan01.service.BoardService;
+import com.example.hooligan01.service.UserDetailsServiceImpl;
 import com.example.hooligan01.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
@@ -19,11 +23,7 @@ public class BoardController {
     private final BoardService boardService;
     private final UserService userService;
 
-//    @GetMapping("/list")
-//    public List<Boards> boardList() {
-//
-//        return boardService.boardList();
-//    }
+    private final UserDetailsServiceImpl userDetailsService;
 
     @GetMapping("/list")
     public List<BoardsDTO> getAllBoards() {
@@ -33,11 +33,9 @@ public class BoardController {
 
     // 게시글 등록
     @PostMapping("/write")
-    public Boolean boardWrite(@RequestBody Boards board, HttpSession session) {
+    public Boolean boardWrite(@RequestBody Boards board, @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        // board.setNickname((String) session.getAttribute("nickname"));
-
-        Users user = userService.findByNickname((String) session.getAttribute("nickname"));
+        Users user = userDetails.getUser();
 
         board.setUser(user);
 

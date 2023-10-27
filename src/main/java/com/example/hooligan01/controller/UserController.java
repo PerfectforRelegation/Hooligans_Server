@@ -1,13 +1,11 @@
 package com.example.hooligan01.controller;
-
-import com.example.hooligan01.dto.SignResponse;
+import com.example.hooligan01.dto.LoginResponse;
 import com.example.hooligan01.entity.Users;
 import com.example.hooligan01.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.UUID;
@@ -53,27 +51,16 @@ public class UserController {
 
     // 회원가입
     @PostMapping("/join")
-    public Boolean userJoin(@RequestBody Users user) {
+    public Boolean userJoin(@RequestBody Users user) throws Exception {
 
         return userService.join(user);
     }
 
     // 로그인
     @PostMapping("/login")
-    public Users userLogin(@RequestBody Users user, HttpSession session) {
+    public LoginResponse userLogin(@RequestBody Users user, HttpServletResponse response) {
 
-        Users loginResult = userService.login(user);
-
-        // 로그인 성공
-        if (loginResult != null) {
-
-            session.setAttribute("account", loginResult.getAccount());
-            session.setAttribute("nickname", loginResult.getNickname());
-
-            return loginResult;
-        } else {
-            return null;
-        }
+        return userService.login(user, response);
     }
 
     // 아이디 찾기(이름과 생일를 받음)
@@ -100,15 +87,6 @@ public class UserController {
 
     }
 
-//    // 내 정보 수정(정보 받기)
-//    @GetMapping("/updateForm")
-//    public Users userUpdateForm(HttpSession session) {
-//
-//        String myAccount = (String) session.getAttribute("account");
-//
-//        return userService.updateForm(myAccount);
-//    }
-
     // 내 정보 수정(세션 안넣음)
     @PutMapping("/update")
     public Boolean update(@RequestBody Users user) {
@@ -132,16 +110,5 @@ public class UserController {
         session.invalidate();
 
         return true;
-    }
-
-    // test ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-    @PostMapping("/testLogin")
-    public ResponseEntity<SignResponse> login(@RequestBody Users user) throws Exception {
-        return new ResponseEntity<>(userService.loginTest(user), HttpStatus.OK);
-    }
-
-    @PostMapping("/testJoin")
-    public ResponseEntity<Boolean> join(@RequestBody Users user) throws Exception {
-        return new ResponseEntity<>(userService.joinTest(user), HttpStatus.OK);
     }
 }

@@ -15,6 +15,6 @@ public interface BetRepository extends JpaRepository<Bets, UUID> {
     List<Bets> findAllById(UUID id);
 
     @Query("SELECT new com.example.hooligan01.dto.BetsDTO(b.id, u.homeTeam, u.awayTeam, b.win) " +
-            "FROM Bets b JOIN b.games u")
+            "FROM Bets b JOIN b.fixtures u")
     List<BetsDTO> findAllWithTeam();
 }
