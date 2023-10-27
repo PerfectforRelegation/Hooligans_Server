@@ -13,7 +13,6 @@ import java.util.UUID;
 @Entity
 @Data
 @Builder @AllArgsConstructor @NoArgsConstructor
-
 public class Users {
 
     @Id @GeneratedValue(generator = "uuid2")
@@ -62,7 +61,7 @@ public class Users {
         board.setUser(this);
     }
 
-    @OneToMany(mappedBy = "heartUsers")
+    @OneToMany(mappedBy = "heartUsers", cascade = CascadeType.ALL)
     private List<Heart> hearts = new ArrayList<>();
 
     public void addHeart(Heart heart) {
@@ -82,13 +81,15 @@ public class Users {
 //    @JoinColumn(name = "userInfo")
 //    private Bets betInfo;
 
-    // authority
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @Builder.Default
-    private List<Authorities> roles = new ArrayList<>();
+    @OneToOne(mappedBy = "users", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private RefreshToken token;
 
-    public void setRoles(List<Authorities> role) {
-        this.roles = role;
-        role.forEach(o -> o.setUser(this));
-    }
+//    // authority
+//    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+//    private List<Authority> roles = new ArrayList<>();
+//
+//    public void setRoles(List<Authority> role) {
+//        this.roles = role;
+//        role.forEach(o -> o.setUser(this));
+//    }
 }

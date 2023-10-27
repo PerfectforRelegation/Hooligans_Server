@@ -23,8 +23,8 @@ public class Bets {
 
     @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "game_id")
-    private Games games;
+    @JoinColumn(name = "fixture_id")
+    private Fixtures fixtures;
 
     @OneToMany(mappedBy = "bets")
     private List<Points> points = new ArrayList<>();

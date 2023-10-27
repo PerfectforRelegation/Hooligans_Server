@@ -32,7 +32,7 @@ public class PointController {
 
         if (pointService.save(point)) {
 
-            if (point.getPick().equals(bet.getGames().getHomeTeam()))
+            if (point.getPick().equals(bet.getFixtures().getHomeTeam()))
                 bet.setHomePoint(bet.getHomePoint() + point.getBetPoint());
             else
                 bet.setAwayPoint(bet.getAwayPoint() + point.getBetPoint());
