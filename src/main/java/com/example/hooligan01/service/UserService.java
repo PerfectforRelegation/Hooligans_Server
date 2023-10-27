@@ -53,7 +53,8 @@ public class UserService {
     public Boolean join(Users inputUser) throws Exception {
 
         if (userRepository.findByAccount(inputUser.getAccount()).isPresent()) {
-            throw new RuntimeException("Overlap Check");
+//            throw new RuntimeException("Overlap Check");
+            return false;
         }
 
         inputUser.setPassword(passwordEncoder.encode(inputUser.getPassword()));
