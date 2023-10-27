@@ -1,6 +1,7 @@
 package com.example.hooligan01.service;
 
 import com.example.hooligan01.dto.LoginResponse;
+import com.example.hooligan01.dto.Message;
 import com.example.hooligan01.security.JwtUtil;
 import com.example.hooligan01.entity.RefreshToken;
 import com.example.hooligan01.repository.RefreshTokenRepository;
@@ -50,17 +51,21 @@ public class UserService {
         return user.orElse(null);
     }
 
-    public Boolean join(Users inputUser) throws Exception {
+    public Message join(Users inputUser) throws Exception {
 
         if (userRepository.findByAccount(inputUser.getAccount()).isPresent()) {
 //            throw new RuntimeException("Overlap Check");
-            return false;
+            return Message.builder()
+                    .message("아이디 없음")
+                    .build();
         }
 
         inputUser.setPassword(passwordEncoder.encode(inputUser.getPassword()));
 
         userRepository.save(inputUser);
-        return true;
+        return Message.builder()
+                .message("로그인 성공")
+                .build();
     }
 
     public LoginResponse login(Users inputUser, HttpServletResponse response) {

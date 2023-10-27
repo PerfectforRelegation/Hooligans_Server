@@ -1,5 +1,6 @@
 package com.example.hooligan01.controller;
 import com.example.hooligan01.dto.LoginResponse;
+import com.example.hooligan01.dto.Message;
 import com.example.hooligan01.entity.Users;
 import com.example.hooligan01.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -51,7 +52,7 @@ public class UserController {
 
     // 회원가입
     @PostMapping("/join")
-    public Boolean userJoin(@RequestBody Users user) throws Exception {
+    public Message userJoin(@RequestBody Users user) throws Exception {
 
         return userService.join(user);
     }
