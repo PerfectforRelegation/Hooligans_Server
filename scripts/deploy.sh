@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+# !/usr/bin/env bash
 
 REPOSITORY=/home/ubuntu/Hooligans_Server
 cd $REPOSITORY
