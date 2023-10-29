@@ -18,9 +18,6 @@ public class Boards {
     @Column(name = "board_id")
     private Long id;
 
-//    @Column(nullable = false)
-//    private String nickname;
-
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -31,6 +28,9 @@ public class Boards {
 
     @Column(nullable = false)
     private String content;
+
+    @Column(columnDefinition = "integer default 0", nullable = false)
+    private int commentCount;
 
     @Column(columnDefinition = "integer default 0", nullable = false)
     private int heartCount;
@@ -51,5 +51,13 @@ public class Boards {
     public void addHeart(Heart heart) {
         this.hearts.add(heart);
         heart.setHeartBoards(this);
+    }
+
+    @OneToMany(mappedBy = "board")
+    private List<BoardComments> comments = new ArrayList<>();
+
+    public void addComment(BoardComments comment) {
+        this.comments.add(comment);
+        comment.setBoard(this);
     }
 }

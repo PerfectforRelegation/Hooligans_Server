@@ -6,13 +6,15 @@ import com.example.hooligan01.security.JwtUtil;
 import com.example.hooligan01.entity.RefreshToken;
 import com.example.hooligan01.repository.RefreshTokenRepository;
 
-import com.example.hooligan01.dto.TokenDto;
+import com.example.hooligan01.dto.TokenDTO;
 
 import com.example.hooligan01.entity.Users;
 
 import com.example.hooligan01.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -56,7 +58,7 @@ public class UserService {
         if (userRepository.findByAccount(inputUser.getAccount()).isPresent()) {
 //            throw new RuntimeException("Overlap Check");
             return Message.builder()
-                    .message("아이디 없음")
+                    .message("아이디 중복")
                     .build();
         }
 
@@ -64,20 +66,28 @@ public class UserService {
 
         userRepository.save(inputUser);
         return Message.builder()
-                .message("로그인 성공")
+                .message("회원가입 성공")
                 .build();
     }
 
-    public LoginResponse login(Users inputUser, HttpServletResponse response) {
+    public ResponseEntity<Object> login(Users inputUser, HttpServletResponse response) {
 
-        Users user = userRepository.findByAccount(inputUser.getAccount()).orElseThrow(
-                () -> new RuntimeException("Not found Account"));
+        Users user;
+
+        Optional<Users> userCheck = userRepository.findByAccount(inputUser.getAccount());
+
+        if (userCheck.isEmpty()) {
+            Message message = new Message("아이디 없음");
+            return new ResponseEntity<>(message, HttpStatus.OK);
+        } else
+            user = userCheck.get();
 
         if (!passwordEncoder.matches(inputUser.getPassword(), user.getPassword())) {
-            throw new RuntimeException("No matches Password");
+            Message message = new Message("비밀번호 불일치");
+            return new ResponseEntity<>(message, HttpStatus.OK);
         }
 
-        TokenDto tokenDto = jwtUtil.createAllToken(user.getAccount());
+        TokenDTO tokenDto = jwtUtil.createAllToken(user.getAccount());
 
         Optional<RefreshToken> refreshToken = refreshTokenRepository.findByUsersAccount(user.getAccount());
 
@@ -94,7 +104,7 @@ public class UserService {
         // response 헤더에 Access Token / Refresh Token 넣음
         setHeader(response, tokenDto);
 
-        return LoginResponse.builder()
+        LoginResponse loginResponse =  LoginResponse.builder()
                 .id(user.getId())
                 .name(user.getName())
                 .account(user.getAccount())
@@ -108,9 +118,50 @@ public class UserService {
                 .thirdTeam(user.getThirdTeam())
                 .tokenDto(tokenDto)
                 .build();
+
+        return new ResponseEntity<>(loginResponse, HttpStatus.OK);
     }
 
-    private void setHeader(HttpServletResponse response, TokenDto tokenDto) {
+    public ResponseEntity<Object> refreshAccessToken(TokenDTO token, HttpServletResponse response) {
+
+        Message message;
+
+        try {
+
+            String account = jwtUtil.getAccountFromToken(token.getRefreshToken());
+            Optional<Users> user = userRepository.findByAccount(account);
+
+            System.out.println("account = " + account);
+
+            if (user.isEmpty()) {
+                message = new Message("잘못된 계정 정보입니다.");
+                return new ResponseEntity<>(message, HttpStatus.OK);
+            } else
+                System.out.println("유저 있음");
+
+            if (!jwtUtil.refreshTokenValidation(token.getRefreshToken())) {
+                message = new Message("다시 로그인을 해주세요. (refreshToken 검증");
+                return new ResponseEntity<>(message, HttpStatus.OK);
+            }
+
+            TokenDTO tokenDto = jwtUtil.createAllToken(user.get().getAccount());
+            setHeader(response, tokenDto);
+
+            Optional<RefreshToken> refreshToken = refreshTokenRepository.findByUsersAccount(account);
+            refreshTokenRepository.save(refreshToken.get().updateToken(tokenDto.getAccessToken(), tokenDto.getRefreshToken()));
+
+            // 테스트 해보자 이 코드
+
+            return new ResponseEntity<>(tokenDto, HttpStatus.OK);
+
+        } catch (Exception e) {
+
+            message = new Message("다시 로그인을 해주세요. (catch) " + e);
+            return new ResponseEntity<>(message, HttpStatus.OK);
+        }
+    }
+
+    private void setHeader(HttpServletResponse response, TokenDTO tokenDto) {
         response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
         response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
     }

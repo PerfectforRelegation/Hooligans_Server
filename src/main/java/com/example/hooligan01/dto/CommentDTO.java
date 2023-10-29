@@ -2,15 +2,14 @@ package com.example.hooligan01.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Getter
-@Builder
-@NoArgsConstructor
+@Data @Builder
 @AllArgsConstructor
-public class TokenDto {
+@NoArgsConstructor
+public class CommentDTO {
 
-    private String accessToken;
-    private String refreshToken;
+    private String nickname;
+    private String comment;
 }

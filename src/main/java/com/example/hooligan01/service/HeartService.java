@@ -20,8 +20,6 @@ public class HeartService {
         boolean exist = heartRepository.existsByHeartBoardsAndHeartUsers(board, user);
 
         // 게시판 좋아요 수 관리
-        Boards boards = boardRepository.findById(board.getId()).get();
-
         if (!exist) {
 
             Heart heart = new Heart();
@@ -30,10 +28,8 @@ public class HeartService {
 
             heartRepository.save(heart);
 
-            // 게시판 좋아요 수 관리
-            int count = heartRepository.findAll().size();
-            boards.setHeartCount(count);
-            boardRepository.save(boards);
+            board.setHeartCount(board.getHeartCount() + 1);
+            boardRepository.save(board);
 
             return true;
         } else {
@@ -42,10 +38,8 @@ public class HeartService {
 
             heartRepository.deleteById(heart.getId());
 
-            // 게시판 좋아요 수 관리
-            int count = heartRepository.findAll().size();
-            boards.setHeartCount(count);
-            boardRepository.save(boards);
+            board.setHeartCount(board.getHeartCount() - 1);
+            boardRepository.save(board);
 
             return false;
         }
