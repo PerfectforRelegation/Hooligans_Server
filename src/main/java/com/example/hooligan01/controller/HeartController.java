@@ -27,6 +27,5 @@ public class HeartController {
         Users user = userDetails.getUser();
 
         return heartService.checkHeart(board, user);
-
     }
 }

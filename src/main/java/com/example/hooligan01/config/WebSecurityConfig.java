@@ -52,7 +52,7 @@ public class WebSecurityConfig {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.authorizeRequests().antMatchers("/ws", "/ws-stomp", "/user/join", "/user/login",
-                        "/fixture/**", "/token/refresh", "/team/**").permitAll()
+                        "/fixture/**", "/token/refresh", "/team/**", "/user/refresh").permitAll()
                 .anyRequest().authenticated()
                 .and().addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 

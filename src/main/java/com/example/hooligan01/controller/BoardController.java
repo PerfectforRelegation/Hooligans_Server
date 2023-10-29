@@ -1,16 +1,23 @@
 package com.example.hooligan01.controller;
 
 import com.example.hooligan01.dto.BoardsDTO;
+import com.example.hooligan01.dto.BoardsDetailDTO;
 import com.example.hooligan01.entity.Boards;
 import com.example.hooligan01.entity.Users;
 import com.example.hooligan01.security.UserDetailsImpl;
 import com.example.hooligan01.service.BoardService;
 import com.example.hooligan01.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+//1. board/list -> 댓글 개수 추가
+//2. board/detail -> hearts 대신 댓글 리턴, 댓글 보이기
+//3. main 에 뭐 넣지
+//4. heartService findAll.size 수정
 
 @RestController
 @RequiredArgsConstructor
@@ -18,12 +25,11 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
-    private final UserService userService;
 
     @GetMapping("/list")
     public List<BoardsDTO> getAllBoards() {
 
-        return boardService.findAllWithNickName();
+        return boardService.findAllBoard();
     }
 
     // 게시글 등록
@@ -40,17 +46,10 @@ public class BoardController {
     }
 
     // 게시글 상세보기(수정 및 삭제...?)  view 값 오름
-    // 세션 값으로 비교 후 수정, 삭제 버튼이 생길 수 있도록 boolean 반환 값을 주어야 할까..?
     @GetMapping("/detail/{id}")
-    public Boards boardDetail(@PathVariable Long id) {
+    public ResponseEntity<BoardsDetailDTO> boardDetail(@PathVariable Long id) {
 
-        Boards board = boardService.findByBoardId(id);
-
-        board.setView(board.getView() + 1);
-
-        boardService.write(board);
-
-        return board;
+        return boardService.getBoardDetail(id);
     }
 
     // 게시글 수정(게시글 상세보기에서 수정 버튼을 누르는 식으로..?)

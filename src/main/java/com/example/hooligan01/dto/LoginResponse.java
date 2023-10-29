@@ -25,5 +25,5 @@ public class LoginResponse {
     private String secondTeam;
     private String thirdTeam;
 
-    private TokenDto tokenDto;
+    private TokenDTO tokenDto;
 }
