@@ -75,13 +75,13 @@ public class MainController {
                         .home(fixture.getHome())
                         .away(fixture.getAway())
                         .stadium(fixture.getStadium())
-                        .isLive(fixture.getIsLive())
                         .homeScore(fixture.getHomeScore())
                         .awayScore(fixture.getAwayScore())
                         .time(fixture.getTime())
                         .homeAllocation(fixture.getHomeAllocation())
                         .awayAllocation(fixture.getAwayAllocation())
                         .drawAllocation(fixture.getDrawAllocation())
+                        .status(fixture.getStatus())
                         .build();
 
                 fixtureDTOList.add(dto);

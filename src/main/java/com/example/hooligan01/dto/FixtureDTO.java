@@ -16,11 +16,11 @@ public class FixtureDTO {
     private String home;
     private String away;
     private String stadium;
-    private Boolean isLive;
     private Integer homeScore;
     private Integer awayScore;
     private String time;
     private Double homeAllocation;
     private Double awayAllocation;
     private Double drawAllocation;
+    private String status;
 }
