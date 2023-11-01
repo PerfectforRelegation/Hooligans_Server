@@ -18,11 +18,25 @@ public class ChatRoom implements Serializable {
 
     private String roomId;
     private String name;
+    private Long count;
 
     public static ChatRoom create(String name) {
         ChatRoom chatRoom = new ChatRoom();
         chatRoom.roomId = UUID.randomUUID().toString();
         chatRoom.name = name;
+        chatRoom.count = 0L;
         return chatRoom;
+    }
+
+    public Long getCount() {
+        return count;
+    }
+
+    public void plusCount() {
+        count++;
+    }
+
+    public void minusCount() {
+        count--;
     }
 }
