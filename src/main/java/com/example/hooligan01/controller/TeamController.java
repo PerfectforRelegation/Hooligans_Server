@@ -1,5 +1,6 @@
 package com.example.hooligan01.controller;
 
+import com.example.hooligan01.dto.Message;
 import com.example.hooligan01.entity.Teams;
 import com.example.hooligan01.service.TeamService;
 import lombok.RequiredArgsConstructor;
@@ -28,24 +29,24 @@ public class TeamController {
         return teamService.teamList();
     }
 
-//    @GetMapping("/table")
-//    public Message leagueTable() throws Exception {
-//        JSONParser parser = new JSONParser();
-//        Reader reader = new FileReader("/home/ubuntu/crawling_python/premier-league.json");
-//        JSONObject jsonObject = (JSONObject) parser.parse(reader);
-//
-//        return teamService.teamSave(jsonObject);
-//    }
-
-    // cron = "0 0 6 * * *" -> 매일 아침 6시마다 / "0 */2 * * * *" 2분마다
-    @Scheduled(cron = "0 */2 * * * *")
-    public void loadLeagueTable() throws IOException, ParseException {
-        JSONParser parser = new JSONParser();//"/home/ubuntu/crawling_python/premier-league.json""C:/Users/jody8/OneDrive/바탕 화면/premier-league.json"
+    @GetMapping("/table")
+    public Message leagueTable() throws Exception {
+        JSONParser parser = new JSONParser();
         Reader reader = new FileReader("/home/ubuntu/crawling_python/premier-league.json");
         JSONObject jsonObject = (JSONObject) parser.parse(reader);
 
-        teamService.teamSave(jsonObject);
+        return teamService.teamSave(jsonObject);
     }
+
+//    // cron = "0 0 6 * * *" -> 매일 아침 6시마다 / "0 */2 * * * *" 2분마다
+//    @Scheduled(cron = "0 */2 * * * *")
+//    public void loadLeagueTable() throws IOException, ParseException {
+//        JSONParser parser = new JSONParser();//"/home/ubuntu/crawling_python/premier-league.json""C:/Users/jody8/OneDrive/바탕 화면/premier-league.json"
+//        Reader reader = new FileReader("/home/ubuntu/crawling_python/premier-league.json");
+//        JSONObject jsonObject = (JSONObject) parser.parse(reader);
+//
+//        teamService.teamSave(jsonObject);
+//    }
 
 
     /*@GetMapping(

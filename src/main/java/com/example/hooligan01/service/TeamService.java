@@ -22,59 +22,57 @@ public class TeamService {
         return teamRepository.findAll();
     }
 
-    public void teamSave(JSONObject jsonObject) {
+    public Message teamSave(JSONObject jsonObject) {
 
-        JSONArray leagueTable = (JSONArray) jsonObject.get("leaguetable");
+        try {
+            JSONArray leagueTable = (JSONArray) jsonObject.get("leaguetable");
 
-        for (Object team : leagueTable) {
+            for (Object team : leagueTable) {
 
-            JSONObject teamInfo = (JSONObject) team;
+                JSONObject teamInfo = (JSONObject) team;
 
-            Teams inputTeam = Teams.builder()
-                    .teamId((String) teamInfo.get("teamid"))
-                    .teamName((String) teamInfo.get("teamname"))
-                    .teamLogo((String) teamInfo.get("team_logo"))
-                    .played(Integer.parseInt((String) teamInfo.get("played")))
-                    .won(Integer.parseInt((String) teamInfo.get("won")))
-                    .drawn(Integer.parseInt((String) teamInfo.get("drawn")))
-                    .lost(Integer.parseInt((String) teamInfo.get("lost")))
-                    .gf(Integer.parseInt((String) teamInfo.get("gf")))
-                    .ga(Integer.parseInt((String) teamInfo.get("ga")))
-                    .gd(Integer.parseInt((String) teamInfo.get("gd")))
-                    .points(Integer.parseInt((String) teamInfo.get("points")))
-                    .build();
+                Teams inputTeam = Teams.builder()
+                        .teamId((String) teamInfo.get("teamid"))
+                        .teamName((String) teamInfo.get("teamname"))
+                        .teamLogo((String) teamInfo.get("team_logo"))
+                        .played(Integer.parseInt((String) teamInfo.get("played")))
+                        .won(Integer.parseInt((String) teamInfo.get("won")))
+                        .drawn(Integer.parseInt((String) teamInfo.get("drawn")))
+                        .lost(Integer.parseInt((String) teamInfo.get("lost")))
+                        .gf(Integer.parseInt((String) teamInfo.get("gf")))
+                        .ga(Integer.parseInt((String) teamInfo.get("ga")))
+                        .gd(Integer.parseInt((String) teamInfo.get("gd")))
+                        .points(Integer.parseInt((String) teamInfo.get("points")))
+                        .build();
 
-            teamRepository.save(inputTeam);
+                teamRepository.save(inputTeam);
+            }
+
+            return Message.builder().message("팀 저장 완료").build();
+        } catch (Exception e) {
+            return Message.builder().message("팀 저장 안됨 " + e).build();
         }
-
-//        try {
-//            JSONArray leagueTable = (JSONArray) jsonObject.get("leaguetable");
+        //        JSONArray leagueTable = (JSONArray) jsonObject.get("leaguetable");
 //
-//            for (Object team : leagueTable) {
+//        for (Object team : leagueTable) {
 //
-//                JSONObject teamInfo = (JSONObject) team;
+//            JSONObject teamInfo = (JSONObject) team;
 //
-//                Teams inputTeam = Teams.builder()
-//                        .teamId((String) teamInfo.get("teamid"))
-//                        .teamName((String) teamInfo.get("teamname"))
-//                        .teamLogo((String) teamInfo.get("team_logo"))
-//                        .played(Integer.parseInt((String) teamInfo.get("played")))
-//                        .won(Integer.parseInt((String) teamInfo.get("won")))
-//                        .drawn(Integer.parseInt((String) teamInfo.get("drawn")))
-//                        .lost(Integer.parseInt((String) teamInfo.get("lost")))
-//                        .gf(Integer.parseInt((String) teamInfo.get("gf")))
-//                        .ga(Integer.parseInt((String) teamInfo.get("ga")))
-//                        .gd(Integer.parseInt((String) teamInfo.get("gd")))
-//                        .points(Integer.parseInt((String) teamInfo.get("points")))
-//                        .build();
+//            Teams inputTeam = Teams.builder()
+//                    .teamId((String) teamInfo.get("teamid"))
+//                    .teamName((String) teamInfo.get("teamname"))
+//                    .teamLogo((String) teamInfo.get("team_logo"))
+//                    .played(Integer.parseInt((String) teamInfo.get("played")))
+//                    .won(Integer.parseInt((String) teamInfo.get("won")))
+//                    .drawn(Integer.parseInt((String) teamInfo.get("drawn")))
+//                    .lost(Integer.parseInt((String) teamInfo.get("lost")))
+//                    .gf(Integer.parseInt((String) teamInfo.get("gf")))
+//                    .ga(Integer.parseInt((String) teamInfo.get("ga")))
+//                    .gd(Integer.parseInt((String) teamInfo.get("gd")))
+//                    .points(Integer.parseInt((String) teamInfo.get("points")))
+//                    .build();
 //
-//                teamRepository.save(inputTeam);
-//            }
-//
-//            Message.builder().message("팀 저장 완료").build();
-//        } catch (Exception e) {
-//            Message.builder().message("팀 저장 안됨 " + e).build();
+//            teamRepository.save(inputTeam);
 //        }
     }
-
 }
