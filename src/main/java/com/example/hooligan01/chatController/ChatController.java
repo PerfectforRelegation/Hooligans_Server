@@ -21,15 +21,18 @@ public class ChatController {
     // @SendTo("/sub/chat/{roomId}")
     @MessageMapping("/chat/message")
     public void message(@Payload ChatMessage chatMessage) {
+        System.out.print(ChatMessage.MessageType.QUIT);
+        System.out.println(chatMessage.getType());
         if (ChatMessage.MessageType.ENTER.equals(chatMessage.getType())) {
             chatRoomRepository.enterChatRoom(chatMessage.getRoomId());
             chatRoomRepository.plusUserCount(chatMessage.getRoomId());
-            chatMessage.setMessage(chatMessage.getSender() + "님이 입장하셨습니다!");
+            chatMessage.setMessage(chatMessage.getType()+":"+chatMessage.getSender() + "님이 입장하셨습니다!");
             System.out.println(chatMessage.getMessage().toString());
         }
+
         if (ChatMessage.MessageType.QUIT.equals(chatMessage.getType())) {
             chatRoomRepository.minusUserCount(chatMessage.getRoomId());
-            chatMessage.setMessage(chatMessage.getSender() + "님이 퇴장하셨습니다!");
+            chatMessage.setMessage(chatMessage.getType()+":"+chatMessage.getSender() + "님이 퇴장하셨습니다!");
             System.out.println(chatMessage.getMessage().toString());
         }
 
