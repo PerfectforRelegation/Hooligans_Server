@@ -36,9 +36,6 @@ public class Fixtures {
     @Column(nullable = false)
     private String stadium;
 
-    @Column
-    private Boolean isLive;
-
     @Column(nullable = false)
     private Integer homeScore;
 

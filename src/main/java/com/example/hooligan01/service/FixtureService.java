@@ -50,9 +50,9 @@ public class FixtureService {
             Long hs = (Long) fixtureInfo.get("homeScore");
             Long as = (Long) fixtureInfo.get("awayScore");
 
-//            Long homeAllocation = (Long) fixtureInfo.get("");
-//            Long awayAllocation = (Long) fixtureInfo.get("");
-//            Long drawAllocation = (Long) fixtureInfo.get("");
+            Long homeAllocation = (Long) fixtureInfo.get("homeAllocation");
+            Long awayAllocation = (Long) fixtureInfo.get("awayAllocation");
+            Long drawAllocation = (Long) fixtureInfo.get("drawAllocation");
 
             Optional<Fixtures> findFixture =
                     fixtureRepository.findByHomeAndAwayAndDate((String) fixtureInfo.get("home"), (String) fixtureInfo.get("away"), date);
@@ -99,7 +99,6 @@ public class FixtureService {
                         betRepository.save(bet);
                     }
                 }
-
             } else {
 
                 Fixtures inputFixture = Fixtures.builder()
@@ -108,13 +107,12 @@ public class FixtureService {
                         .home((String) fixtureInfo.get("home"))
                         .away((String) fixtureInfo.get("away"))
                         .stadium((String) fixtureInfo.get("stadium"))
-                        .isLive((Boolean) fixtureInfo.get("isLive"))
                         .homeScore(Math.toIntExact(hs))
                         .awayScore(Math.toIntExact(as))
                         .time((String) fixtureInfo.get("time"))
-                        .homeAllocation(1.2)
-                        .awayAllocation(2.4)
-                        .drawAllocation(0.6)
+                        .homeAllocation(Double.valueOf(homeAllocation))
+                        .awayAllocation(Double.valueOf(awayAllocation))
+                        .drawAllocation(Double.valueOf(drawAllocation))
                         .status((String) fixtureInfo.get("status"))
                         .build();
 

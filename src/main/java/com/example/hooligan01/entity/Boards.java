@@ -50,7 +50,7 @@ public class Boards {
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private Users user;
 
     @OneToMany(mappedBy = "heartBoards", cascade = CascadeType.ALL)
