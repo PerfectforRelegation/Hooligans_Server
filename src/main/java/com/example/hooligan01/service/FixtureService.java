@@ -62,33 +62,43 @@ public class FixtureService {
 
                 Fixtures updateFixture = findFixture.get();
 
-                updateFixture.setLeague(league);
-                updateFixture.setDate(date);
-                updateFixture.setHome((String) fixtureInfo.get("home"));
-                updateFixture.setAway((String) fixtureInfo.get("away"));
-                updateFixture.setStadium((String) fixtureInfo.get("stadium"));
-                updateFixture.setIsLive((Boolean) fixtureInfo.get("isLive"));
+//                updateFixture.setLeague(league);
+//                updateFixture.setDate(date);
+//                updateFixture.setHome((String) fixtureInfo.get("home"));
+//                updateFixture.setAway((String) fixtureInfo.get("away"));
+//                updateFixture.setStadium((String) fixtureInfo.get("stadium"));
+//                updateFixture.setIsLive((Boolean) fixtureInfo.get("isLive"));
                 updateFixture.setHomeScore(Math.toIntExact(hs));
                 updateFixture.setAwayScore(Math.toIntExact(as));
                 updateFixture.setTime((String) fixtureInfo.get("time"));
-                updateFixture.setHomeAllocation(1.2); // 배당 수정 필요
-                updateFixture.setAwayAllocation(2.4);
-                updateFixture.setDrawAllocation(0.6);
+//                updateFixture.setHomeAllocation(1.2); // 배당 수정 필요
+//                updateFixture.setAwayAllocation(2.4);
+//                updateFixture.setDrawAllocation(0.6);
                 // updateFixture.setStatus("PRE"); // 경기 상태 수정 필요
                 updateFixture.setStatus((String) fixtureInfo.get("status"));
 
                 fixtureRepository.save(updateFixture);
+
                 Optional<Bets> getBet = betRepository.findByFixturesId(updateFixture.getId());
 
                 if (getBet.isPresent()) {
 
                     Bets bet = getBet.get();
 
-                    // status 값이 "END"가 아니면 bet 의 win 값을 null
-                    if (!updateFixture.getStatus().equals("END")) {
+                    // status 값이 "POST"가 아니면 bet 의 win 값을 null
+                    if (!updateFixture.getStatus().equals("POST")) {
+
                         bet.setWin(null);
                         betRepository.save(bet);
                     }
+//                    } else {
+//
+//                        //String win = (homeScore > awayScore) ? "home" : (homeScore < awayScore) ? "away" : "draw";
+//
+//                        String win =
+//
+//                        bet.setWin();
+//                    }
                 }
 
             } else {
@@ -106,7 +116,7 @@ public class FixtureService {
                         .homeAllocation(1.2)
                         .awayAllocation(2.4)
                         .drawAllocation(0.6)
-                        .status("notEnd")
+                        .status((String) fixtureInfo.get("status"))
                         .build();
 
                 fixtureRepository.save(inputFixture);

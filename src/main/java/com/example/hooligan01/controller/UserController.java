@@ -70,7 +70,6 @@ public class UserController {
             return null;
         } else
              return findIdResult;
-
     }
 
     /***/
