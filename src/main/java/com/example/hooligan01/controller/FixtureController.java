@@ -1,11 +1,13 @@
 package com.example.hooligan01.controller;
 
+import com.example.hooligan01.dto.FixtureDTO;
 import com.example.hooligan01.entity.Fixtures;
 import com.example.hooligan01.service.FixtureService;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,21 +23,13 @@ public class FixtureController {
 
     private final FixtureService fixtureService;
 
-    @PostMapping
-    public Boolean input(@RequestBody Fixtures fixture) {
-
-        return fixtureService.save(fixture);
-    }
-
     @GetMapping("/table")
-    public boolean leagueTable() throws Exception {
+    public ResponseEntity<Object> leagueTable() throws Exception {
         JSONParser parser = new JSONParser();//
         Reader reader = new FileReader("/home/ubuntu/crawling_python/fixtures.json");
         JSONObject jsonObject = (JSONObject) parser.parse(reader);
 
-        fixtureService.fixtureSave(jsonObject);
-
-        return true;
+        return fixtureService.fixtureSave(jsonObject);
     }
 
     // cron = "0 0 6 * * *" -> 매일 아침 6시마다 / "0 */2 * * * *" 2분마다
@@ -49,7 +43,7 @@ public class FixtureController {
     }
 
     @GetMapping("/list")
-    public List<Fixtures> getAllList() {
+    public List<FixtureDTO> getAllList() {
 
         return fixtureService.getAllList();
     }
