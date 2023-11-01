@@ -74,7 +74,7 @@ public class Users {
         heart.setHeartUsers(this);
     }
 
-    @OneToMany(mappedBy = "users")
+    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
     private List<Points> points = new ArrayList<>();
 
     public void addPoint(Points point) {

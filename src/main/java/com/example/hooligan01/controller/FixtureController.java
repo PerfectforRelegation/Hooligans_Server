@@ -27,16 +27,16 @@ public class FixtureController {
         return fixtureService.save(fixture);
     }
 
-//    @GetMapping("/table")
-//    public boolean leagueTable() throws Exception {
-//        JSONParser parser = new JSONParser();//"/home/ubuntu/crawling_python/fixtures.json"
-//        Reader reader = new FileReader("C:/Users/jody8/OneDrive/바탕 화면/fixtures.json");
-//        JSONObject jsonObject = (JSONObject) parser.parse(reader);
-//
-//        fixtureService.fixtureSave(jsonObject);
-//
-//        return true;
-//    }
+    @GetMapping("/table")
+    public boolean leagueTable() throws Exception {
+        JSONParser parser = new JSONParser();//
+        Reader reader = new FileReader("/home/ubuntu/crawling_python/fixtures.json");
+        JSONObject jsonObject = (JSONObject) parser.parse(reader);
+
+        fixtureService.fixtureSave(jsonObject);
+
+        return true;
+    }
 
     // cron = "0 0 6 * * *" -> 매일 아침 6시마다 / "0 */2 * * * *" 2분마다
     @Scheduled(cron = "0 0 6 * * *", zone = "Asia/Seoul")

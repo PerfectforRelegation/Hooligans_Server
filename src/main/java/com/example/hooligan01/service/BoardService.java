@@ -116,6 +116,7 @@ public class BoardService {
             List<CommentDTO> commentDetails = new ArrayList<>();
             for (BoardComments comment : board.getComments()) {
                 commentDetails.add(CommentDTO.builder()
+                        .id(comment.getId())
                         .nickname(comment.getUser().getNickname())
                         .comment(comment.getComment())
                         .build());
