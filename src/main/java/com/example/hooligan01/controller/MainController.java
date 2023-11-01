@@ -36,9 +36,9 @@ public class MainController {
     public ResponseEntity<Object> getMain(@AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         try {
-            // 뉴스 리스트 불러오기 //"/home/ubuntu/crawling_python/news.json"
+            // 뉴스 리스트 불러오기 //"C:/Users/jody8/OneDrive/바탕 화면/news.json"
             JSONParser parser = new JSONParser();//
-            Reader reader = new InputStreamReader(new FileInputStream("C:/Users/jody8/OneDrive/바탕 화면/news.json"), "euc-kr");
+            Reader reader = new InputStreamReader(new FileInputStream("/home/ubuntu/crawling_python/news.json"), "euc-kr");
             JSONObject jsonObject = (JSONObject) parser.parse(reader);
 
             //ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
