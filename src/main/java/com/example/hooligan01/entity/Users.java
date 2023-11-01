@@ -47,8 +47,16 @@ public class Users {
     @Column
     private String thirdTeam;
 
-    @Column(columnDefinition = "integer default 0", nullable = false)
+    @Column(columnDefinition = "integer default 5000", nullable = false)
     private int betPoint;
+
+    /** 새로 추가한 코드 **/
+    @Column
+    private String filename;
+
+    @Column
+    private String filepath;
+    /** ㅡㅡㅡㅡㅡㅡㅡㅡ **/
 
     @OneToMany(mappedBy = "user")
     private List<Boards> boards = new ArrayList<>();

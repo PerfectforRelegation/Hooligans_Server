@@ -32,9 +32,7 @@ public class Points {
     @Column(nullable = false)
     private String pick;
 
-    // 보상 받는 컬럼 (걸은 팀이 이기면 true)
-    @Column
+    // true 면 수취된 것
+    @Column(columnDefinition = "BOOLEAN DEFAULT FALSE", nullable = false)
     private Boolean result;
-
-    //
 }

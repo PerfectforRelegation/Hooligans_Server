@@ -15,6 +15,6 @@ public interface BoardRepository extends JpaRepository<Boards, Long> {
     Optional<Boards> findById(Long id);
 
     @Query("SELECT new com.example.hooligan01.dto.BoardsDTO(b.id, u.nickname, b.title, b.content, b.commentCount, b.heartCount, " +
-            "b.view, b.modified, b.boardDate) FROM Boards b JOIN b.user u")
+            "b.view, b.modified, b.boardDate, b.filename, b.filepath) FROM Boards b JOIN b.user u")
     List<BoardsDTO> findAllWithNicknameAndCount();
 }
