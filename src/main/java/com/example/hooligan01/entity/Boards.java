@@ -49,11 +49,11 @@ public class Boards {
     /** ㅡㅡㅡㅡㅡㅡㅡㅡ **/
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "user_id", nullable = false)
     private Users user;
 
-    @OneToMany(mappedBy = "heartBoards")
+    @OneToMany(mappedBy = "heartBoards", cascade = CascadeType.ALL)
     private List<Heart> hearts;
 
     public void addHeart(Heart heart) {
@@ -61,7 +61,7 @@ public class Boards {
         heart.setHeartBoards(this);
     }
 
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
     private List<BoardComments> comments = new ArrayList<>();
 
     public void addComment(BoardComments comment) {

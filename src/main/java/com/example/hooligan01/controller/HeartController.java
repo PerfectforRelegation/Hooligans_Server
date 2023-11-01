@@ -7,6 +7,7 @@ import com.example.hooligan01.service.BoardService;
 import com.example.hooligan01.service.HeartService;
 import com.example.hooligan01.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,12 +21,10 @@ public class HeartController {
     private final HeartService heartService;
     private final BoardService boardService;
 
+    // 경로에 board 아이디 값
     @PostMapping("/{id}")
-    public Boolean check(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<Object> check(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        Boards board = boardService.findByBoardId(id);
-        Users user = userDetails.getUser();
-
-        return heartService.checkHeart(board, user);
+        return heartService.checkHeart(id, userDetails);
     }
 }
