@@ -14,7 +14,7 @@ import java.io.Serializable;
 public class ChatMessage {
 
     public enum MessageType {
-        ENTER, TALK;
+        ENTER, QUIT, TALK;
     }
 
     private MessageType type;
