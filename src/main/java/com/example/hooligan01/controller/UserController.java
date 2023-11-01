@@ -1,9 +1,10 @@
 package com.example.hooligan01.controller;
-import com.example.hooligan01.dto.LoginResponse;
 import com.example.hooligan01.dto.Message;
+import com.example.hooligan01.dto.TokenDTO;
 import com.example.hooligan01.entity.Users;
 import com.example.hooligan01.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -59,9 +60,16 @@ public class UserController {
 
     // 로그인
     @PostMapping("/login")
-    public LoginResponse userLogin(@RequestBody Users user, HttpServletResponse response) {
+    public ResponseEntity<Object> userLogin(@RequestBody Users user, HttpServletResponse response) {
 
         return userService.login(user, response);
+    }
+
+    // 토큰 재발급
+    @PostMapping("/refresh")
+    public ResponseEntity<Object> getRefreshToken(@RequestBody TokenDTO tokenDto, HttpServletResponse response) {
+
+        return userService.refreshAccessToken(tokenDto, response);
     }
 
     // 아이디 찾기(이름과 생일를 받음)

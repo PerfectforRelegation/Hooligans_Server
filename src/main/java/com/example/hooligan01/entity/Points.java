@@ -34,5 +34,7 @@ public class Points {
 
     // 보상 받는 컬럼 (걸은 팀이 이기면 true)
     @Column
-    private boolean reward;
+    private Boolean result;
+
+    //
 }

@@ -1,14 +1,11 @@
 package com.example.hooligan01.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 public class BoardsDTO {
 
@@ -16,8 +13,9 @@ public class BoardsDTO {
     private String nickname;
     private String title;
     private String content;
-    private int heartCount;
-    private int view;
-    private boolean modified;
+    private Integer commentCount;
+    private Integer heartCount;
+    private Integer view;
+    private Boolean modified;
     private LocalDate boardDate;
 }

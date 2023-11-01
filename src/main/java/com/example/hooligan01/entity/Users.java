@@ -38,9 +38,6 @@ public class Users {
     @Column(nullable = false)
     private String birth;
 
-//    @Column
-//    private String accessToken;
-
     @Column
     private String firstTeam;
 
@@ -77,19 +74,14 @@ public class Users {
         point.setUsers(this);
     }
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "userInfo")
-//    private Bets betInfo;
+    @OneToMany(mappedBy = "user")
+    private List<BoardComments> comments = new ArrayList<>();
+
+    public void addComment(BoardComments comment) {
+        this.comments.add(comment);
+        comment.setUser(this);
+    }
 
     @OneToOne(mappedBy = "users", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private RefreshToken token;
-
-//    // authority
-//    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-//    private List<Authority> roles = new ArrayList<>();
-//
-//    public void setRoles(List<Authority> role) {
-//        this.roles = role;
-//        role.forEach(o -> o.setUser(this));
-//    }
 }

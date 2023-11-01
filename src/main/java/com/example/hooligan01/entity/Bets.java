@@ -18,9 +18,6 @@ public class Bets {
     @Column(name = "bet_id", columnDefinition = "BINARY(16)")
     private UUID id;
 
-//    @OneToMany(mappedBy = "betInfo")
-//    private List<Users> userInfo;
-
     @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fixture_id")

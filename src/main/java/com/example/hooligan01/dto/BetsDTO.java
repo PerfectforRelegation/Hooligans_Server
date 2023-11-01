@@ -12,7 +12,7 @@ import java.util.UUID;
 public class BetsDTO {
 
     private UUID id;
-    private String homeTeam;
-    private String awayTeam;
+    private String home;
+    private String away;
     private String win;
 }

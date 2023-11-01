@@ -2,7 +2,7 @@ package com.example.hooligan01.security;
 
 import com.example.hooligan01.entity.RefreshToken;
 import com.example.hooligan01.repository.RefreshTokenRepository;
-import com.example.hooligan01.dto.TokenDto;
+import com.example.hooligan01.dto.TokenDTO;
 import com.example.hooligan01.service.UserDetailsServiceImpl;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -54,8 +54,8 @@ public class JwtUtil {
     }
 
     // 토큰 생성
-    public TokenDto createAllToken(String account) {
-        return new TokenDto(createToken(account, "Access"), createToken(account, "Refresh"));
+    public TokenDTO createAllToken(String account) {
+        return new TokenDTO(createToken(account, "Access"), createToken(account, "Refresh"));
     }
 
     public String createToken(String account, String type) {
