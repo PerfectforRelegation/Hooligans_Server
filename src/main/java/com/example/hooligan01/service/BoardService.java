@@ -6,7 +6,9 @@ import com.example.hooligan01.dto.CommentDTO;
 import com.example.hooligan01.dto.Message;
 import com.example.hooligan01.entity.BoardComments;
 import com.example.hooligan01.entity.Boards;
+import com.example.hooligan01.entity.Users;
 import com.example.hooligan01.repository.BoardRepository;
+import com.example.hooligan01.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -62,16 +64,41 @@ public class BoardService {
     }
 
     // 게시글 업데이트
-    public Boolean update(Boards boards) {
+    public ResponseEntity<Object> update(Boards boards) {
 
-        boardRepository.save(boards);
+        try {
+            if (!boards.isModified())
+                boards.setModified(true);
 
-        return true;
+            boardRepository.save(boards);
+
+            return new ResponseEntity<>(new Message("게시판 수정 완료"), HttpStatus.OK);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>(new Message("게시판 업데이트 에러 " + e), HttpStatus.OK);
+        }
     }
 
     // 게시글 삭제
-    public void deleteByBoardId(Long id) {
-        boardRepository.deleteById(id);
+    public ResponseEntity<Object> deleteByBoardId(Long id, UserDetailsImpl userDetails) {
+
+        try {
+            Optional<Boards> getBoard = boardRepository.findById(id);
+            if (getBoard.isEmpty())
+                return new ResponseEntity<>(new Message("deleteByBoardId 에러, 아이디 값에 따른 게시판 없음"), HttpStatus.OK);
+
+            Boards board = getBoard.get();
+            Users user = userDetails.getUser();
+
+            if (board.getUser().getNickname().equals(user.getNickname())) {
+                boardRepository.deleteById(id);
+                return new ResponseEntity<>(new Message("게시글 삭제 완료"), HttpStatus.OK);
+            } else
+                return new ResponseEntity<>(new Message("deleteByBoardId 에러, 닉네임 불일치"), HttpStatus.OK);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>(new Message("deleteByBoardId 에러 " + e), HttpStatus.OK);
+        }
     }
 
     // 게시글 상세
@@ -113,6 +140,34 @@ public class BoardService {
         } catch (Exception e) {
 
             message = new Message("getBoardDetail 에러 " + e);
+            return new ResponseEntity<>(message, HttpStatus.OK);
+        }
+    }
+
+    // 게시판 수정 업데이트 폼
+    public ResponseEntity<Object> getBoardUpdateForm(Long id, UserDetailsImpl userDetails) {
+
+        Message message;
+
+        try {
+
+            Optional<Boards> getBoard = boardRepository.findById(id);
+            if (getBoard.isEmpty()) {
+                message = new Message("게시판 수정 폼 에러, 게시판 없음");
+                return new ResponseEntity<>(message, HttpStatus.OK);
+            }
+
+            Boards board = getBoard.get();
+            Users user = userDetails.getUser();
+
+            if (board.getUser().getNickname().equals(user.getNickname()))
+                return new ResponseEntity<>(board, HttpStatus.OK);
+            else
+                return new ResponseEntity<>(new Message("해당 게시판의 유저 데이터와 접속한 유저의 데이터 불일치"), HttpStatus.OK);
+
+        } catch (Exception e) {
+
+            message = new Message("게시판 수정 폼 에러 " + e);
             return new ResponseEntity<>(message, HttpStatus.OK);
         }
     }

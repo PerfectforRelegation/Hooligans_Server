@@ -89,15 +89,15 @@ public class FixtureService {
 
                         bet.setWin(null);
                         betRepository.save(bet);
+                    } else {
+
+                        String win = (updateFixture.getHomeScore() > updateFixture.getAwayScore()) ?
+                                updateFixture.getHome() : (updateFixture.getHomeScore() < updateFixture.getAwayScore()) ?
+                                updateFixture.getAway() : "DRAW";
+                        bet.setWin(win);
+
+                        betRepository.save(bet);
                     }
-//                    } else {
-//
-//                        //String win = (homeScore > awayScore) ? "home" : (homeScore < awayScore) ? "away" : "draw";
-//
-//                        String win =
-//
-//                        bet.setWin();
-//                    }
                 }
 
             } else {

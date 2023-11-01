@@ -18,11 +18,6 @@ public class Boards {
     @Column(name = "board_id")
     private Long id;
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private Users user;
-
     @Column(nullable = false)
     private String title;
 
@@ -52,6 +47,11 @@ public class Boards {
     @Column
     private String filepath;
     /** ㅡㅡㅡㅡㅡㅡㅡㅡ **/
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private Users user;
 
     @OneToMany(mappedBy = "heartBoards")
     private List<Heart> hearts;

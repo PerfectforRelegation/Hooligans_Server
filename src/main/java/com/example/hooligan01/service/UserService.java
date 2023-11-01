@@ -197,24 +197,70 @@ public class UserService {
     }
 
     // 비번 찾기
-    public Users findIdPw(String account) {
+    public ResponseEntity<Object> findIdPw(String account, String phoneNumber) {
 
-        Optional<Users> byAccount = userRepository.findByAccount(account);
+        Message message;
 
-        return byAccount.orElse(null);
+        try {
+
+            Optional<Users> byAccountAndPhoneNumber = userRepository.findByAccountAndPhoneNumber(account, phoneNumber);
+
+            if (byAccountAndPhoneNumber.isEmpty()) {
+                message = new Message("입력한 정보의 데이터 x");
+                return new ResponseEntity<>(message, HttpStatus.OK);
+
+            } else {
+                Users user = byAccountAndPhoneNumber.get();
+                return new ResponseEntity<>(user, HttpStatus.OK);
+            }
+
+        } catch (Exception e) {
+
+            message = new Message("비밀번호 찾기 에러 " + e);
+            return new ResponseEntity<>(message, HttpStatus.OK);
+        }
     }
 
     // 회원 탈퇴
-    public void deleteByUserId(UUID id) {
-        userRepository.deleteById(id);
+    public ResponseEntity<Object> deleteByUserId(UUID id) {
+
+        Message message;
+
+        try {
+            userRepository.deleteById(id);
+
+            message = new Message("회원 탈퇴 완료");
+            return new ResponseEntity<>(message, HttpStatus.OK);
+
+        } catch (Exception e) {
+            message = new Message("회원 탈퇴 에러 " + e);
+            return new ResponseEntity<>(message, HttpStatus.OK);
+        }
     }
 
     // 아이디 찾기
-    public Users findByNameAndBirth(String name, String birth) {
+    public ResponseEntity<Object> findByNameAndBirth(String name, String birth) {
 
-        Optional<Users> findUser = userRepository.findByNameAndBirth(name, birth);
+        Message message;
 
-        return findUser.orElse(null);
+        try {
+
+            Optional<Users> findUser = userRepository.findByNameAndBirth(name, birth);
+
+            if (findUser.isEmpty()) {
+                message = new Message("입력한 정보의 데이터 x");
+                return new ResponseEntity<>(message, HttpStatus.OK);
+            } else {
+
+                Users user = findUser.get();
+                return new ResponseEntity<>(user, HttpStatus.OK);
+            }
+
+        } catch (Exception e) {
+
+            message = new Message("아이디 찾기 에러 " + e);
+            return new ResponseEntity<>(message, HttpStatus.OK);
+        }
     }
 
     // 유저 개인 정보 가져오기

@@ -83,8 +83,15 @@ public class BetService {
 
         Fixtures fixture = bet.getFixtures();
 
+        if (bet.getWin().equals(fixture.getHome()))
+            bet.setAllocation(fixture.getHomeAllocation());
+        else if (bet.getWin().equals(fixture.getAway()))
+            bet.setAllocation(fixture.getAwayAllocation());
+        else
+            bet.setAllocation(fixture.getDrawAllocation());
+
         // 유저가 베팅을 했을 때 마이너스
-        int updatePoint = user.getBetPoint() + (point.getBetPoint() * bet.getAllocation());
+        int updatePoint = (int) (user.getBetPoint() + (point.getBetPoint() * bet.getAllocation()));
         user.setBetPoint(updatePoint);
 
         point.setResult(true);

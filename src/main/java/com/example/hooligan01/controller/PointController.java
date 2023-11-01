@@ -18,6 +18,7 @@ public class PointController {
 
     private final PointService pointService;
 
+    // 베팅 id 값
     @PostMapping("/bet/{id}")
     public ResponseEntity<Object> pointBetting(@PathVariable UUID id, @RequestBody Points point, @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
