@@ -8,12 +8,10 @@ import com.example.hooligan01.repository.BetRepository;
 import com.example.hooligan01.repository.PointRepository;
 import com.example.hooligan01.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,13 +23,45 @@ public class PointService {
     private final BetRepository betRepository;
     private final UserRepository userRepository;
 
-    public boolean save(Points point) {
+    public ResponseEntity<Object> saveBetting(UUID id, Points point, Users getUser) {
 
-        if (point != null) {
+        Message message;
+
+        try {
+
+            Optional<Bets> bet = betRepository.findById(id);
+            if (bet.isEmpty()) {
+                message = new Message("PointService.saveBetting 에러 : 베팅 아이디 x");
+                return new ResponseEntity<>(message, HttpStatus.OK);
+            }
+
+            Optional<Users> user = userRepository.findById(getUser.getId());
+            if (user.isEmpty()) {
+                message = new Message("PointService.saveBetting 에러 : 유저 아이디 x");
+                return new ResponseEntity<>(message, HttpStatus.OK);
+            }
+
+            point.setBets(bet.get());
+            point.setUsers(user.get());
+
             pointRepository.save(point);
-            return true;
-        } else
-            return false;
+
+            Bets updateBet = bet.get();
+
+            if (point.getPick().equals(bet.get().getFixtures().getHome()))
+                updateBet.setHomePoint(updateBet.getHomePoint() + point.getBetPoint());
+            else
+                updateBet.setAwayPoint(updateBet.getAwayPoint() + point.getBetPoint());
+
+            betRepository.save(updateBet);
+
+            return new ResponseEntity<>(point, HttpStatus.OK);
+
+        } catch (Exception e) {
+
+            message = new Message("PointService.saveBetting 에러 " + e);
+            return new ResponseEntity<>(message, HttpStatus.OK);
+        }
     }
 
 //    public ResponseEntity<Objects> getReword(UUID id, Users user) {

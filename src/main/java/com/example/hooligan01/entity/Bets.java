@@ -39,4 +39,7 @@ public class Bets {
 
     @Column
     private String win;
+
+    @Column(columnDefinition = "integer default 0", nullable = false)
+    private Integer allocation;
 }

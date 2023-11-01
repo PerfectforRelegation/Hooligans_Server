@@ -2,12 +2,13 @@ package com.example.hooligan01.controller;
 
 import com.example.hooligan01.dto.BetsDTO;
 import com.example.hooligan01.entity.Bets;
+import com.example.hooligan01.entity.Boards;
+import com.example.hooligan01.security.UserDetailsImpl;
 import com.example.hooligan01.service.BetService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -26,9 +27,24 @@ public class BetController {
         return betService.getById(id);
     }
 
+    // 모든 경기 배팅 리스트
     @GetMapping("/list")
-    public List<BetsDTO> getAllBets() {
+    public List<BetsDTO> getAllBetList() {
 
         return betService.findList();
+    }
+
+    // 버튼 누를 수 있는 api, bet 아이디 값
+    @GetMapping("/reward/{id}")
+    public Boolean canGetReward(@PathVariable UUID id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        return betService.canGetReward(id, userDetails);
+    }
+
+    // 수취 api, bet 아이디 값
+    @PutMapping("/reward/{id}")
+    public ResponseEntity<Object> getReward(@PathVariable UUID id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        return betService.getReward(id, userDetails);
     }
 }

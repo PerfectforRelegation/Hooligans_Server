@@ -45,6 +45,14 @@ public class Boards {
     @Column(nullable = false)
     private LocalDate boardDate;
 
+    /** 새로 추가한 코드 **/
+    @Column
+    private String filename;
+
+    @Column
+    private String filepath;
+    /** ㅡㅡㅡㅡㅡㅡㅡㅡ **/
+
     @OneToMany(mappedBy = "heartBoards")
     private List<Heart> hearts;
 

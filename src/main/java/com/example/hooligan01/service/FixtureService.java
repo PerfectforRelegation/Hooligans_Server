@@ -7,12 +7,14 @@ import com.example.hooligan01.repository.FixtureRepository;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -49,54 +51,94 @@ public class FixtureService {
             Long hs = (Long) fixtureInfo.get("homeScore");
             Long as = (Long) fixtureInfo.get("awayScore");
 
-            Fixtures inputFixture = Fixtures.builder()
-                    .league(league)
-                    .date(date)
-                    .home((String) fixtureInfo.get("home"))
-                    .away((String) fixtureInfo.get("away"))
-                    .stadium((String) fixtureInfo.get("stadium"))
-                    .isLive((Boolean) fixtureInfo.get("isLive"))
-                    .homeScore(Math.toIntExact(hs))
-                    .awayScore(Math.toIntExact(as))
-                    .time((String) fixtureInfo.get("time"))
-                    .build();
+//            Long homeAllocation = (Long) fixtureInfo.get("");
+//            Long awayAllocation = (Long) fixtureInfo.get("");
+//            Long drawAllocation = (Long) fixtureInfo.get("");
 
-            fixtureRepository.save(inputFixture);
-            Bets bet = new Bets();
-            bet.setFixtures(inputFixture);
-            betRepository.save(bet);
+            Optional<Fixtures> findFixture =
+                    fixtureRepository.findByHomeAndAwayAndDate((String) fixtureInfo.get("home"), (String) fixtureInfo.get("away"), date);
+
+            if (findFixture.isPresent()) {
+
+                Fixtures updateFixture = findFixture.get();
+
+                updateFixture.setLeague(league);
+                updateFixture.setDate(date);
+                updateFixture.setHome((String) fixtureInfo.get("home"));
+                updateFixture.setAway((String) fixtureInfo.get("away"));
+                updateFixture.setStadium((String) fixtureInfo.get("stadium"));
+                updateFixture.setIsLive((Boolean) fixtureInfo.get("isLive"));
+                updateFixture.setHomeScore(Math.toIntExact(hs));
+                updateFixture.setAwayScore(Math.toIntExact(as));
+                updateFixture.setTime((String) fixtureInfo.get("time"));
+                updateFixture.setHomeAllocation(1.2); // 배당 수정 필요
+                updateFixture.setAwayAllocation(2.4);
+                updateFixture.setDrawAllocation(0.6);
+                // updateFixture.setStatus("PRE"); // 경기 상태 수정 필요
+                updateFixture.setStatus((String) fixtureInfo.get("status"));
+
+                fixtureRepository.save(updateFixture);
+                Optional<Bets> getBet = betRepository.findByFixturesId(updateFixture.getId());
+
+                if (getBet.isPresent()) {
+
+                    Bets bet = getBet.get();
+
+                    // status 값이 "END"가 아니면 bet 의 win 값을 null
+                    if (!updateFixture.getStatus().equals("END")) {
+                        bet.setWin(null);
+                        betRepository.save(bet);
+                    }
+                }
+
+            } else {
+
+                Fixtures inputFixture = Fixtures.builder()
+                        .league(league)
+                        .date(date)
+                        .home((String) fixtureInfo.get("home"))
+                        .away((String) fixtureInfo.get("away"))
+                        .stadium((String) fixtureInfo.get("stadium"))
+                        .isLive((Boolean) fixtureInfo.get("isLive"))
+                        .homeScore(Math.toIntExact(hs))
+                        .awayScore(Math.toIntExact(as))
+                        .time((String) fixtureInfo.get("time"))
+                        .homeAllocation(1.2)
+                        .awayAllocation(2.4)
+                        .drawAllocation(0.6)
+                        .status("notEnd")
+                        .build();
+
+                fixtureRepository.save(inputFixture);
+                Bets bet = new Bets();
+                bet.setFixtures(inputFixture);
+                betRepository.save(bet);
+            }
         }
-
-        //        for (Object fixture : fixtures) {
-//            JSONObject fixtureDayJson = (JSONObject) fixture;
-//
-//            String fixtureDay = (String) fixtureDayJson.get("date");
-//            JSONArray fixtureInfos = (JSONArray) fixtureDayJson.get("fixture");
-//
-//            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("E dd MMM yyyy");
-//            LocalDate date = LocalDate.parse(fixtureDay, formatter.withLocale(Locale.US));
-//
-//            for (Object fixtureInfo : fixtureInfos) {
-//                JSONObject fixtureInfoJson = (JSONObject) fixtureInfo;
-//
-//                Fixtures inputFixture = Fixtures.builder()
-//                        .league(league)
-//                        .homeTeam((String) fixtureInfoJson.get("home"))
-//                        .awayTeam((String) fixtureInfoJson.get("away"))
-//                        .date(date)
-//                        .time((String) fixtureInfoJson.get("time"))
-//                        .build();
-//
-//                fixtureRepository.save(inputFixture);
-//                Bets bet = new Bets();
-//                bet.setFixtures(inputFixture);
-//                betRepository.save(bet);
-//            }
-//        }
     }
 
     public List<Fixtures> getAllList() {
 
         return fixtureRepository.findAll();
+    }
+
+    public List<Fixtures> getListToMain() {
+
+        return fixtureRepository.findTop5ByOrderByDateDesc();
+    }
+
+    public List<Fixtures> getPreFixturesList() {
+
+        return fixtureRepository.findAllByStatus("PRE");
+    }
+
+    public List<Fixtures> getLiveFixturesList() {
+
+        return fixtureRepository.findAllByStatus("LIVE");
+    }
+
+    public List<Fixtures> getPostFixturesList() {
+
+        return fixtureRepository.findAllByStatus("POST");
     }
 }

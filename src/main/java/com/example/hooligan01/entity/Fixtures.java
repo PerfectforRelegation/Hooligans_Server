@@ -1,5 +1,6 @@
 package com.example.hooligan01.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,8 +11,9 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
-@Data
+@Data @Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class Fixtures {
 
     @Id @GeneratedValue(generator = "uuid2")
@@ -35,30 +37,31 @@ public class Fixtures {
     private String stadium;
 
     @Column
-    private boolean isLive;
+    private Boolean isLive;
 
     @Column(nullable = false)
-    private int homeScore;
+    private Integer homeScore;
 
     @Column(nullable = false)
-    private int awayScore;
+    private Integer awayScore;
 
     @Column
     private String time;
 
+    /** 새롭게 추가된 것! **/
+    @Column
+    private Double homeAllocation;
+
+    @Column
+    private Double awayAllocation;
+
+    @Column
+    private Double drawAllocation; // 무승부
+
+    @Column // PRE, LIVE, POST -> 시작 전, 경기 중, 경기 끝
+    private String status;
+    /** 새롭게 추가된 것! **/
+
     @OneToOne(mappedBy = "fixtures", cascade = CascadeType.ALL)
     private Bets bets;
-
-    @Builder
-    public Fixtures(String league, LocalDate date, String home, String away, String stadium, boolean isLive, int homeScore, int awayScore, String time) {
-        this.league = league;
-        this.date = date;
-        this.home = home;
-        this.away = away;
-        this.stadium = stadium;
-        this.isLive = isLive;
-        this.homeScore = homeScore;
-        this.awayScore = awayScore;
-        this.time = time;
-    }
 }
