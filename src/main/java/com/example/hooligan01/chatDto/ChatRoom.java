@@ -36,7 +36,5 @@ public class ChatRoom implements Serializable {
         count++;
     }
 
-    public void minusCount() {
-        count--;
-    }
+    public void minusCount() { count--; }
 }
