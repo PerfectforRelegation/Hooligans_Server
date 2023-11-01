@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +39,7 @@ public class MainController {
         try {
             // 뉴스 리스트 불러오기 //"C:/Users/jody8/OneDrive/바탕 화면/news.json"
             JSONParser parser = new JSONParser();//
-            Reader reader = new InputStreamReader(new FileInputStream("/home/ubuntu/crawling_python/news.json"), "euc-kr");
+            Reader reader = new InputStreamReader(new FileInputStream("/home/ubuntu/crawling_python/news.json"), StandardCharsets.UTF_8);
             JSONObject jsonObject = (JSONObject) parser.parse(reader);
 
             //ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
