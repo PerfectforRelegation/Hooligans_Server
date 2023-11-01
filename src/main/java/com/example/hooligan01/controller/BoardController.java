@@ -60,44 +60,24 @@ public class BoardController {
         return boardService.getBoardDetail(id);
     }
 
-    // 게시글 수정(게시글 상세보기에서 수정 버튼을 누르는 식으로..?)
+    // 게시글 수정(게시글 상세보기에서 수정 버튼을 누르는 식으로..?) -> update
     @GetMapping("/updateForm/{id}")
-    public Boards boardUpdateForm(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<Object> boardUpdateForm(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        Users user = userDetails.getUser();
-
-        Boards boards = boardService.findByBoardId(id);
-
-        if (boards.getUser().getNickname().equals(user.getNickname())) {
-            return boards;
-        } else {
-            return null;
-        }
+        return boardService.getBoardUpdateForm(id, userDetails);
     }
 
     // 게시글 수정(업데이트)
     @PutMapping("/update")
-    public Boolean update(@RequestBody Boards boards) {
-
-        if (!boards.isModified())
-            boards.setModified(true);
+    public ResponseEntity<Object> update(@RequestBody Boards boards) {
 
         return boardService.update(boards);
     }
 
     // 게시글 삭제
     @DeleteMapping("/{id}")
-    public Boolean deleteByBoardId(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<Object> deleteByBoardId(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        Boards boards = boardService.findByBoardId(id);
-
-        String myNickname = userDetails.getUser().getNickname();
-
-        if (boards.getUser().getNickname().equals(myNickname)) {
-            boardService.deleteByBoardId(id);
-            return true;
-        } else {
-            return false;
-        }
+        return boardService.deleteByBoardId(id, userDetails);
     }
 }

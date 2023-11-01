@@ -52,24 +52,17 @@ public class UserController {
     // 아이디 찾기(이름과 생일를 받음)
     // 수정 필요!!
     @PostMapping("/findId")
-    public Users userFindUserId(@RequestBody Users user) {
+    public ResponseEntity<Object> userFindUserId(@RequestBody Users user) {
 
         return userService.findByNameAndBirth(user.getName(), user.getBirth());
-
     }
 
     // 비밀번호 찾기(이메일과 전화번호를 받음)
     // 수정 필요!!
     @PostMapping("/findPassword")
-    public Users userFindUserPw(@RequestBody Users users) {
-        Users findIdResult = userService.findIdPw(users.getAccount());
+    public ResponseEntity<Object> userFindUserPw(@RequestBody Users users) {
 
-        if (findIdResult == null) {
-            return null;
-        } else if (!findIdResult.getPhoneNumber().equals(users.getPhoneNumber())) {
-            return null;
-        } else
-             return findIdResult;
+        return userService.findIdPw(users.getAccount(), users.getPhoneNumber());
     }
 
     /***/
@@ -88,7 +81,7 @@ public class UserController {
         return userService.getUserInfo(id, userDetails);
     }
 
-    // 내 정보 수정(세션 안넣음)
+    // 내 정보 수정
     @PutMapping("/update")
     public ResponseEntity<Object> update(@RequestBody Users user) {
 
@@ -97,11 +90,9 @@ public class UserController {
 
     // 회원 탈퇴
     @DeleteMapping("/{id}")
-    public Boolean deleteByUserId(@PathVariable UUID id) {
+    public ResponseEntity<Object> deleteByUserId(@PathVariable UUID id) {
 
-        userService.deleteByUserId(id);
-
-        return true;
+        return userService.deleteByUserId(id);
     }
 
     // 로그아웃

@@ -41,5 +41,5 @@ public class Bets {
     private String win;
 
     @Column(columnDefinition = "integer default 0", nullable = false)
-    private Integer allocation;
+    private Double allocation;
 }
