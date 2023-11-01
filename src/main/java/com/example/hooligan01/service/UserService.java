@@ -12,6 +12,7 @@ import com.example.hooligan01.entity.Users;
 
 import com.example.hooligan01.repository.UserRepository;
 
+import com.example.hooligan01.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -53,10 +54,9 @@ public class UserService {
         return user.orElse(null);
     }
 
-    public Message join(Users inputUser) throws Exception {
+    public Message join(Users inputUser) {
 
         if (userRepository.findByAccount(inputUser.getAccount()).isPresent()) {
-//            throw new RuntimeException("Overlap Check");
             return Message.builder()
                     .message("아이디 중복")
                     .build();
@@ -174,11 +174,26 @@ public class UserService {
 //        return byAccount.get();
 //    }
 
-    public Boolean update(Users user) {
+    public ResponseEntity<Object> update(Users user) {
 
-        userRepository.save(user);
+        Message message;
 
-        return true;
+        try {
+
+            if (user.getId() == null) {
+
+                message = new Message("유저 id가 null");
+                return new ResponseEntity<>(message, HttpStatus.OK);
+            }
+
+            userRepository.save(user);
+            return new ResponseEntity<>(user, HttpStatus.OK);
+
+        } catch (Exception e) {
+
+            message = new Message("업데이트 에러 " + e);
+            return new ResponseEntity<>(message, HttpStatus.OK);
+        }
     }
 
     // 비번 찾기
@@ -202,4 +217,26 @@ public class UserService {
         return findUser.orElse(null);
     }
 
+    // 유저 개인 정보 가져오기
+    public ResponseEntity<Object> getUserInfo(UUID id, UserDetailsImpl userDetails) {
+
+        Message message;
+
+        try {
+
+            Optional<Users> user = userRepository.findByIdAndAccount(id, userDetails.getUser().getAccount());
+
+            if (user.isEmpty()) {
+
+                message = new Message("유저의 id와 account에 따른 계정 정보 X");
+                return new ResponseEntity<>(message, HttpStatus.OK);
+            } else
+                return new ResponseEntity<>(user.get(), HttpStatus.OK);
+
+        } catch (Exception e) {
+
+            message = new Message("getUserInfo() 에러 " + e);
+            return new ResponseEntity<>(message, HttpStatus.OK);
+        }
+    }
 }

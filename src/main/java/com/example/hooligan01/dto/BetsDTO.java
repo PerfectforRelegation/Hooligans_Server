@@ -1,9 +1,8 @@
 package com.example.hooligan01.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -14,5 +13,8 @@ public class BetsDTO {
     private UUID id;
     private String home;
     private String away;
+    private Double homeAllocation;
+    private Double awayAllocation;
+    private Double drawAllocation;
     private String win;
 }

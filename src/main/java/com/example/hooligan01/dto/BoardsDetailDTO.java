@@ -24,5 +24,7 @@ public class BoardsDetailDTO {
     private Integer view;
     private Boolean modified;
     private LocalDate boardDate;
+    private String filename;
+    private String filepath;
     private List<CommentDTO> comments;
 }

@@ -6,18 +6,15 @@ import com.example.hooligan01.entity.Boards;
 import com.example.hooligan01.entity.Users;
 import com.example.hooligan01.security.UserDetailsImpl;
 import com.example.hooligan01.service.BoardService;
-import com.example.hooligan01.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-//1. board/list -> 댓글 개수 추가
-//2. board/detail -> hearts 대신 댓글 리턴, 댓글 보이기
 //3. main 에 뭐 넣지
-//4. heartService findAll.size 수정
 
 @RestController
 @RequiredArgsConstructor
@@ -32,22 +29,33 @@ public class BoardController {
         return boardService.findAllBoard();
     }
 
-    // 게시글 등록
+    // 게시글 등록 with 이미지
     @PostMapping("/write")
-    public Boolean boardWrite(@RequestBody Boards board, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<Object> boardEnroll(@RequestBody Boards board, @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         Users user = userDetails.getUser();
 
         board.setUser(user);
 
-        boardService.write(board);
-
-        return true;
+        return boardService.enroll(board);
     }
+
+    // 게시글 등록
+//    @PostMapping("/write")
+//    public Boolean boardWrite(@RequestBody Boards board, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+//
+//        Users user = userDetails.getUser();
+//
+//        board.setUser(user);
+//
+//        boardService.write(board);
+//
+//        return true;
+//    }
 
     // 게시글 상세보기(수정 및 삭제...?)  view 값 오름
     @GetMapping("/detail/{id}")
-    public ResponseEntity<BoardsDetailDTO> boardDetail(@PathVariable Long id) {
+    public ResponseEntity<Object> boardDetail(@PathVariable Long id) {
 
         return boardService.getBoardDetail(id);
     }
@@ -73,10 +81,6 @@ public class BoardController {
 
         if (!boards.isModified())
             boards.setModified(true);
-
-//        Users user = userService.findByNickname((String) session.getAttribute("nickname"));
-//
-//        boards.setUser(user);
 
         return boardService.update(boards);
     }

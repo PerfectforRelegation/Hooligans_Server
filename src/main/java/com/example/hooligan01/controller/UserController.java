@@ -2,9 +2,11 @@ package com.example.hooligan01.controller;
 import com.example.hooligan01.dto.Message;
 import com.example.hooligan01.dto.TokenDTO;
 import com.example.hooligan01.entity.Users;
+import com.example.hooligan01.security.UserDetailsImpl;
 import com.example.hooligan01.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -24,31 +26,6 @@ public class UserController {
     public List<Users> userList() {
 
         return userService.userList();
-    }
-
-    /***/
-    // 유저 한 명의 정보
-    @GetMapping("/{id}")
-    public Users userInfo(@PathVariable UUID id) {
-
-        return userService.findById(id);
-    }
-    /***/
-  
-    // 유저 디테일
-    @GetMapping("/detail/{id}")
-    public Users userDetail(@PathVariable UUID id, HttpSession session) {
-
-        Users user = userService.findById(id);
-
-        String myAccount = (String) session.getAttribute("account");
-
-        if (user == null)
-            throw new IllegalArgumentException("아이디 x");
-        else if (!user.getAccount().equals(myAccount))
-            throw new IllegalArgumentException("계정이 세션값과 불일치");
-        else
-            return user;
     }
 
     // 회원가입
@@ -96,9 +73,25 @@ public class UserController {
 
     }
 
+    /***/
+    // 유저 한 명의 정보
+    @GetMapping("/{id}")
+    public Users userInfo(@PathVariable UUID id) {
+
+        return userService.findById(id);
+    }
+    /***/
+
+    // 유저 디테일
+    @GetMapping("/detail/{id}")
+    public ResponseEntity<Object> userDetail(@PathVariable UUID id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        return userService.getUserInfo(id, userDetails);
+    }
+
     // 내 정보 수정(세션 안넣음)
     @PutMapping("/update")
-    public Boolean update(@RequestBody Users user) {
+    public ResponseEntity<Object> update(@RequestBody Users user) {
 
         return userService.update(user);
     }

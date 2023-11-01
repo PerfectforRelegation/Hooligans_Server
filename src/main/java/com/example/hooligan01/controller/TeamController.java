@@ -1,14 +1,16 @@
 package com.example.hooligan01.controller;
 
-import com.example.hooligan01.dto.Message;
 import com.example.hooligan01.entity.Teams;
 import com.example.hooligan01.service.TeamService;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.Reader;
 import java.util.List;
 
@@ -26,15 +28,25 @@ public class TeamController {
         return teamService.teamList();
     }
 
+//    @GetMapping("/table")
+//    public Message leagueTable() throws Exception {
+//        JSONParser parser = new JSONParser();
+//        Reader reader = new FileReader("/home/ubuntu/crawling_python/premier-league.json");
+//        JSONObject jsonObject = (JSONObject) parser.parse(reader);
+//
+//        return teamService.teamSave(jsonObject);
+//    }
 
-    @GetMapping("/table")
-    public Message leagueTable() throws Exception {
-        JSONParser parser = new JSONParser();
+    // cron = "0 0 6 * * *" -> 매일 아침 6시마다 / "0 */2 * * * *" 2분마다
+    @Scheduled(cron = "0 0 6 * * *", zone = "Asia/Seoul")
+    public void loadLeagueTable() throws IOException, ParseException {
+        JSONParser parser = new JSONParser();           //"C:/Users/jody8/OneDrive/바탕 화면/premier-league.json"
         Reader reader = new FileReader("/home/ubuntu/crawling_python/premier-league.json");
         JSONObject jsonObject = (JSONObject) parser.parse(reader);
 
-        return teamService.teamSave(jsonObject);
+        teamService.teamSave(jsonObject);
     }
+
 
     /*@GetMapping(
             value = "/get-image-with-media-type",
