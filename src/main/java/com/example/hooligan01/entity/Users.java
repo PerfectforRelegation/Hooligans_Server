@@ -75,10 +75,13 @@ public class Users {
         heart.setHeartUsers(this);
     }
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "bet_id")
-    private Bets bet;
+//    @JsonIgnore
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "bet_id")
+//    private Bets bet;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Bets> bets = new ArrayList<>();
 
     @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
     private List<Points> points = new ArrayList<>();

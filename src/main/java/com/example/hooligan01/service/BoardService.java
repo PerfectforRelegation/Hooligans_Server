@@ -40,6 +40,10 @@ public class BoardService {
             return new ResponseEntity<>(new Message("findAllBoard error : " + e), HttpStatus.OK);
         }
     }
+//    public ResponseEntity<Object> findAllBoard() {
+//
+//        return new ResponseEntity<>(boardRepository.findAll(), HttpStatus.OK);
+//    }
 
     // 게시글 작성
 //    public void write(Boards board) {
