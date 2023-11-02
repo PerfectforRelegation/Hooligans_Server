@@ -60,8 +60,11 @@ public class BetService {
             point = getPoint.get();
         assert point != null;
 
+        if (bet.getWin() == null || point.getPick() == null)
+            return false;
+
         // 리턴 값 true 면 버튼 활성화, Points 의 result 값이 false 이어야 활성화 -> 수취 못했다는 뜻
-        return bet.getWin().equals(point.getPick()) && !point.getResult();
+        return bet.getWin().equals(point.getPick()) && !point.isResult();
     }
 
     // 수취 api service

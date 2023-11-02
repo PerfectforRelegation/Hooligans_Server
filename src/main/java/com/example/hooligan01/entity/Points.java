@@ -34,5 +34,5 @@ public class Points {
 
     // true 면 수취된 것
     @Column(columnDefinition = "BOOLEAN DEFAULT FALSE", nullable = false)
-    private Boolean result;
+    private boolean result;
 }

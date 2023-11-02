@@ -54,19 +54,9 @@ public class FixtureService {
 
                     Fixtures updateFixture = findFixture.get();
 
-//                updateFixture.setLeague(league);
-//                updateFixture.setDate(date);
-//                updateFixture.setHome((String) fixtureInfo.get("home"));
-//                updateFixture.setAway((String) fixtureInfo.get("away"));
-//                updateFixture.setStadium((String) fixtureInfo.get("stadium"));
-//                updateFixture.setIsLive((Boolean) fixtureInfo.get("isLive"));
                     updateFixture.setHomeScore(Math.toIntExact(hs));
                     updateFixture.setAwayScore(Math.toIntExact(as));
                     updateFixture.setTime((String) fixtureInfo.get("time"));
-//                updateFixture.setHomeAllocation(1.2); // 배당 수정 필요
-//                updateFixture.setAwayAllocation(2.4);
-//                updateFixture.setDrawAllocation(0.6);
-                    // updateFixture.setStatus("PRE"); // 경기 상태 수정 필요
                     updateFixture.setStatus((String) fixtureInfo.get("status"));
 
                     fixtureRepository.save(updateFixture);

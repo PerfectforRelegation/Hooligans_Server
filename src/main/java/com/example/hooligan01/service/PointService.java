@@ -35,16 +35,11 @@ public class PointService {
                 return new ResponseEntity<>(message, HttpStatus.OK);
             }
 
-            Optional<Users> user = userRepository.findById(getUser.getId());
-            if (user.isEmpty()) {
+            Optional<Users> userGet = userRepository.findById(getUser.getId());
+            if (userGet.isEmpty()) {
                 message = new Message("PointService.saveBetting 에러 : 유저 아이디 x");
                 return new ResponseEntity<>(message, HttpStatus.OK);
             }
-
-            point.setBets(bet.get());
-            point.setUsers(user.get());
-
-            pointRepository.save(point);
 
             Bets updateBet = bet.get();
 
@@ -53,9 +48,42 @@ public class PointService {
             else
                 updateBet.setAwayPoint(updateBet.getAwayPoint() + point.getBetPoint());
 
-            betRepository.save(updateBet);
+            Users user = userGet.get();
+            if (user.getBetPoint() >= point.getBetPoint()) {
+                // 포인트를 사용자에서 먼저 뺀 후 저장
+                user.setBetPoint(user.getBetPoint() - point.getBetPoint());
+                userRepository.save(user);
 
-            return new ResponseEntity<>(point, HttpStatus.OK);
+                // 포인트 엔티티에 설정 및 저장
+                point.setUsers(user);
+                point.setBets(updateBet);
+                pointRepository.save(point);
+
+                // 베팅 엔티티를 저장 (포인트 엔티티에 참조가 설정되어야 함)
+                betRepository.save(updateBet);
+
+                return new ResponseEntity<>(point, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(new Message("포인트 부족"), HttpStatus.OK);
+            }
+
+//            betRepository.save(updateBet);
+//
+//            point.setBets(updateBet);
+//
+//            Users user = userGet.get();
+//            if (user.getBetPoint() >= point.getBetPoint())
+//                user.setBetPoint(user.getBetPoint() - point.getBetPoint());
+//            else
+//                return new ResponseEntity<>(new Message("포인트 부족"), HttpStatus.OK);
+//
+//            point.setUsers(user);
+//
+//            userRepository.save(user);
+//
+//            pointRepository.save(point);
+//
+//            return new ResponseEntity<>(point, HttpStatus.OK);
 
         } catch (Exception e) {
 

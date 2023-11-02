@@ -23,14 +23,6 @@ public class Bets {
     @JoinColumn(name = "fixture_id")
     private Fixtures fixtures;
 
-    @OneToMany(mappedBy = "bets")
-    private List<Points> points = new ArrayList<>();
-
-    public void addPoint(Points point) {
-        this.points.add(point);
-        point.setBets(this);
-    }
-
     @Column(columnDefinition = "integer default 0", nullable = false)
     private int homePoint;
 
@@ -42,4 +34,17 @@ public class Bets {
 
     @Column(columnDefinition = "double default 0")
     private Double allocation;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private Users users;
+
+    @OneToMany(mappedBy = "bets")
+    private List<Points> points = new ArrayList<>();
+
+    public void addPoint(Points point) {
+        this.points.add(point);
+        point.setBets(this);
+    }
 }
