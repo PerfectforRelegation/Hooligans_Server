@@ -25,8 +25,8 @@ public class FixtureController {
 
     @GetMapping("/table")
     public ResponseEntity<Object> leagueTable() throws Exception {
-        JSONParser parser = new JSONParser();//
-        Reader reader = new FileReader("C:/Users/jody8/OneDrive/바탕 화면/fixtures.json");
+        JSONParser parser = new JSONParser();//"C:/Users/jody8/OneDrive/바탕 화면/fixtures.json"
+        Reader reader = new FileReader("/home/ubuntu/crawling_python/fixtures.json");
         JSONObject jsonObject = (JSONObject) parser.parse(reader);
 
         return fixtureService.fixtureSave(jsonObject);
@@ -36,7 +36,7 @@ public class FixtureController {
     @Scheduled(cron = "0 0 6 * * *", zone = "Asia/Seoul")
     public void loadFixtureTable() throws IOException, ParseException {
         JSONParser parser = new JSONParser();// "/home/ubuntu/crawling_python/fixtures.json"
-        Reader reader = new FileReader("C:/Users/jody8/OneDrive/바탕 화면/fixtures.json");
+        Reader reader = new FileReader("/home/ubuntu/crawling_python/fixtures.json");
         JSONObject jsonObject = (JSONObject) parser.parse(reader);
 
         fixtureService.fixtureSave(jsonObject);
