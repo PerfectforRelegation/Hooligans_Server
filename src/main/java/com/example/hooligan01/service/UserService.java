@@ -297,7 +297,12 @@ public class UserService {
 
         try {
 
-            Users user = userDetails.getUser();
+            Optional<Users> userGet = userRepository.findById(userDetails.getUser().getId());
+
+            if (userGet.isEmpty())
+                return new ResponseEntity<>(new Message("아이디 없음"), HttpStatus.OK);
+
+            Users user = userGet.get();
 
             List<UserBetPointDTO> userBetPointDTOS = betRepository.findBetsWithPointsByUsersId(user.getId());
 
