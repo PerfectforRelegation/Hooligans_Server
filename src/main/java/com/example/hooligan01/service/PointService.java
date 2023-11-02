@@ -43,6 +43,9 @@ public class PointService {
 
             Bets updateBet = bet.get();
 
+            if (updateBet.getWin() != null)
+                return new ResponseEntity<>(new Message("끝난 경기임"), HttpStatus.OK);
+
             if (point.getPick().equals(bet.get().getFixtures().getHome()))
                 updateBet.setHomePoint(updateBet.getHomePoint() + point.getBetPoint());
             else
@@ -60,6 +63,7 @@ public class PointService {
                 pointRepository.save(point);
 
                 // 베팅 엔티티를 저장 (포인트 엔티티에 참조가 설정되어야 함)
+                updateBet.setUsers(user);
                 betRepository.save(updateBet);
 
                 return new ResponseEntity<>(point, HttpStatus.OK);

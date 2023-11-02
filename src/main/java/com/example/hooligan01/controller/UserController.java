@@ -97,9 +97,7 @@ public class UserController {
 
     // 로그아웃
     @GetMapping("/logout")
-    public Boolean logout(HttpSession session) {
-
-        session.invalidate();
+    public Boolean logout() {
 
         return true;
     }

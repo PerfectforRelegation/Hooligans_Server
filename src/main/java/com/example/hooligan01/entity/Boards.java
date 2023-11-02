@@ -49,7 +49,7 @@ public class Boards {
     /** ㅡㅡㅡㅡㅡㅡㅡㅡ **/
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private Users user;
 

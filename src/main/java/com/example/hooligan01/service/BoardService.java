@@ -17,10 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -29,9 +26,19 @@ public class BoardService {
     private final BoardRepository boardRepository;
 
     // 모든 게시글 리스트 출력
-    public List<BoardsDTO> findAllBoard() {
+    public ResponseEntity<Object> findAllBoard() {
 
-        return boardRepository.findAllWithNicknameAndCount();
+        try {
+            List<BoardsDTO> boardsDTOS = boardRepository.findAllWithNicknameAndCount();
+
+            if (boardsDTOS.isEmpty())
+                return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
+            else
+                return new ResponseEntity<>(boardsDTOS, HttpStatus.OK);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>(new Message("findAllBoard error : " + e), HttpStatus.OK);
+        }
     }
 
     // 게시글 작성
