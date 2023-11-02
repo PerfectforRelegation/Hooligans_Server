@@ -2,6 +2,9 @@ package com.example.hooligan01.service;
 
 import com.example.hooligan01.dto.LoginResponse;
 import com.example.hooligan01.dto.Message;
+import com.example.hooligan01.dto.UserBetPointDTO;
+import com.example.hooligan01.entity.Bets;
+import com.example.hooligan01.repository.BetRepository;
 import com.example.hooligan01.security.JwtUtil;
 import com.example.hooligan01.entity.RefreshToken;
 import com.example.hooligan01.repository.RefreshTokenRepository;
@@ -33,7 +36,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
-
+    private final BetRepository betRepository;
 
     public List<Users> userList() {
 
@@ -63,6 +66,9 @@ public class UserService {
         }
 
         inputUser.setPassword(passwordEncoder.encode(inputUser.getPassword()));
+
+        if (inputUser.getBetPoint() == 0)
+            inputUser.setBetPoint(5000);
 
         userRepository.save(inputUser);
         return Message.builder()
@@ -283,6 +289,21 @@ public class UserService {
 
             message = new Message("getUserInfo() 에러 " + e);
             return new ResponseEntity<>(message, HttpStatus.OK);
+        }
+    }
+
+    // 유저가 베팅한 거 리스트 가져오기
+    public ResponseEntity<Object> getUserBetList(UserDetailsImpl userDetails) {
+
+        try {
+
+            Users user = userDetails.getUser();
+
+            List<UserBetPointDTO> userBetPointDTOS = betRepository.findBetsWithPointsByUsersId(user.getId());
+
+            return new ResponseEntity<>(userBetPointDTOS, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new Message("getUserBetList error : " + e), HttpStatus.OK);
         }
     }
 }

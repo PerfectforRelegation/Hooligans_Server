@@ -103,4 +103,11 @@ public class UserController {
 
         return true;
     }
+
+    // 유저가 베팅한 거 리스트
+    @GetMapping("/bet")
+    public ResponseEntity<Object> getUserBetList(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        return userService.getUserBetList(userDetails);
+    }
 }

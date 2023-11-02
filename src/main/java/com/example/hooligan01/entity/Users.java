@@ -47,7 +47,7 @@ public class Users {
     @Column
     private String thirdTeam;
 
-    @Column(columnDefinition = "integer default 5000", nullable = false)
+    @Column
     private int betPoint;
 
     /** 새로 추가한 코드 **/
@@ -73,6 +73,9 @@ public class Users {
         this.hearts.add(heart);
         heart.setHeartUsers(this);
     }
+
+    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
+    private List<Bets> bets = new ArrayList<>();
 
     @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
     private List<Points> points = new ArrayList<>();
