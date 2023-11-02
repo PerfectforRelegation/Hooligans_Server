@@ -1,5 +1,6 @@
 package com.example.hooligan01.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -74,8 +75,10 @@ public class Users {
         heart.setHeartUsers(this);
     }
 
-    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
-    private List<Bets> bets = new ArrayList<>();
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bet_id")
+    private Bets bet;
 
     @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
     private List<Points> points = new ArrayList<>();

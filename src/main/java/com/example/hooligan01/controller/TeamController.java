@@ -38,6 +38,15 @@ public class TeamController {
         return teamService.teamSave(jsonObject);
     }
 
+    @GetMapping("/listTable")
+    public JSONObject leagueListTable() throws Exception {
+        JSONParser parser = new JSONParser();
+        Reader reader = new FileReader("/home/ubuntu/crawling_python/premier-league.json");
+        JSONObject jsonObject = (JSONObject) parser.parse(reader);
+
+        return jsonObject;
+    }
+
 //    // cron = "0 0 6 * * *" -> 매일 아침 6시마다 / "0 */2 * * * *" 2분마다
 //    @Scheduled(cron = "0 */2 * * * *")
 //    public void loadLeagueTable() throws IOException, ParseException {

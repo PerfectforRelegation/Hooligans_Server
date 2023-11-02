@@ -304,7 +304,9 @@ public class UserService {
 
             Users user = userGet.get();
 
-            List<UserBetPointDTO> userBetPointDTOS = betRepository.findBetsWithPointsByUsersId(user.getId());
+//            List<UserBetPointDTO> userBetPointDTOS = betRepository.findBetsWithPointsByUsersId(user.getId());
+
+            List<UserBetPointDTO> userBetPointDTOS = userRepository.findAll(user.getId());
 
             return new ResponseEntity<>(userBetPointDTOS, HttpStatus.OK);
         } catch (Exception e) {
