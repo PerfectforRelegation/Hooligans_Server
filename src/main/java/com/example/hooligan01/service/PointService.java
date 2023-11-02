@@ -57,7 +57,6 @@ public class PointService {
             if (user.getBetPoint() >= point.getBetPoint()) {
                 // 포인트를 사용자에서 먼저 뺀 후 저장
                 user.setBetPoint(user.getBetPoint() - point.getBetPoint());
-                user.setBet(updateBet);
                 userRepository.save(user);
 
                 // 포인트 엔티티에 설정 및 저장
@@ -66,6 +65,7 @@ public class PointService {
                 pointRepository.save(point);
 
                 // 베팅 엔티티를 저장 (포인트 엔티티에 참조가 설정되어야 함)
+                updateBet.setUser(user);
                 betRepository.save(updateBet);
 
                 return new ResponseEntity<>(point, HttpStatus.OK);
