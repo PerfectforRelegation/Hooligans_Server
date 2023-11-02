@@ -32,19 +32,21 @@ public class PointService {
             Optional<Bets> bet = betRepository.findById(id);
             if (bet.isEmpty()) {
                 message = new Message("PointService.saveBetting 에러 : 베팅 아이디 x");
-                return new ResponseEntity<>(message, HttpStatus.OK);
+                return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
             }
 
             Optional<Users> userGet = userRepository.findById(getUser.getId());
             if (userGet.isEmpty()) {
                 message = new Message("PointService.saveBetting 에러 : 유저 아이디 x");
-                return new ResponseEntity<>(message, HttpStatus.OK);
+                return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
             }
+
+            System.out.println("#################");
 
             Bets updateBet = bet.get();
 
             if (updateBet.getWin() != null)
-                return new ResponseEntity<>(new Message("끝난 경기임"), HttpStatus.OK);
+                return new ResponseEntity<>(new Message("끝난 경기임"), HttpStatus.BAD_REQUEST);
 
             if (point.getPick().equals(bet.get().getFixtures().getHome()))
                 updateBet.setHomePoint(updateBet.getHomePoint() + point.getBetPoint());
@@ -68,31 +70,12 @@ public class PointService {
 
                 return new ResponseEntity<>(point, HttpStatus.OK);
             } else {
-                return new ResponseEntity<>(new Message("포인트 부족"), HttpStatus.OK);
+                return new ResponseEntity<>(new Message("포인트 부족"), HttpStatus.BAD_REQUEST);
             }
-
-//            betRepository.save(updateBet);
-//
-//            point.setBets(updateBet);
-//
-//            Users user = userGet.get();
-//            if (user.getBetPoint() >= point.getBetPoint())
-//                user.setBetPoint(user.getBetPoint() - point.getBetPoint());
-//            else
-//                return new ResponseEntity<>(new Message("포인트 부족"), HttpStatus.OK);
-//
-//            point.setUsers(user);
-//
-//            userRepository.save(user);
-//
-//            pointRepository.save(point);
-//
-//            return new ResponseEntity<>(point, HttpStatus.OK);
-
         } catch (Exception e) {
 
             message = new Message("PointService.saveBetting 에러 " + e);
-            return new ResponseEntity<>(message, HttpStatus.OK);
+            return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
         }
     }
 

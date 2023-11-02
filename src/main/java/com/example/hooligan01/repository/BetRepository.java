@@ -26,7 +26,7 @@ public interface BetRepository extends JpaRepository<Bets, UUID> {
 
     @Query("SELECT new com.example.hooligan01.dto.UserBetPointDTO(b.id, f.date, f.home, f.away," +
             " f.homeAllocation, f.awayAllocation, f.drawAllocation, b.win, p)" +
-            " FROM Bets b JOIN b.fixtures f JOIN b.points p where b.users.id = :userId")
+            " FROM Bets b JOIN b.fixtures f JOIN b.points p where b.users.id = :userId and p.users.id = :userId")
     List<UserBetPointDTO> findBetsWithPointsByUsersId(@Param("userId") UUID userId);
 
 //    @Query("SELECT b from Bets b join fetch b.points p where p.users.id = :user_id")
