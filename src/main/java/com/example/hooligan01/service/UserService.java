@@ -1,19 +1,14 @@
 package com.example.hooligan01.service;
 
+import com.example.hooligan01.dto.BoardsDTO;
 import com.example.hooligan01.dto.LoginResponse;
 import com.example.hooligan01.dto.Message;
 import com.example.hooligan01.dto.UserBetPointDTO;
-import com.example.hooligan01.entity.Bets;
-import com.example.hooligan01.repository.BetRepository;
+import com.example.hooligan01.entity.*;
+import com.example.hooligan01.repository.*;
 import com.example.hooligan01.security.JwtUtil;
-import com.example.hooligan01.entity.RefreshToken;
-import com.example.hooligan01.repository.RefreshTokenRepository;
 
 import com.example.hooligan01.dto.TokenDTO;
-
-import com.example.hooligan01.entity.Users;
-
-import com.example.hooligan01.repository.UserRepository;
 
 import com.example.hooligan01.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +19,9 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -36,26 +31,24 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final BetRepository betRepository;
+    private final BettingRepository bettingRepository;
+    private final PointRepository pointRepository;
+    private final BoardRepository boardRepository;
 
     public List<Users> userList() {
 
         return userRepository.findAll();
     }
 
-    public Users findByNickname(String nickname) {
-
-        Optional<Users> user = userRepository.findByNickname(nickname);
-
-        return user.get();
-    }
-
-    public Users findById(UUID id) {
-
-        Optional<Users> user = userRepository.findById(id);
-
-        return user.orElse(null);
-    }
+//    public ResponseEntity<Object> findById(UUID id) {
+//
+//        Optional<Users> userGet = userRepository.findById(id);
+//
+//        return userGet.<ResponseEntity<Object>>map(
+//            users -> new ResponseEntity<>(users, HttpStatus.OK)).orElseGet(
+//            () -> new ResponseEntity<>(new Message("UserService.findById 아이디 값에 따른 유저 정보 없음"),
+//                HttpStatus.OK));
+//    }
 
     public Message join(Users inputUser) {
 
@@ -95,14 +88,23 @@ public class UserService {
 
         TokenDTO tokenDto = jwtUtil.createAllToken(user.getAccount());
 
+        // redis
+//        Token existingToken = tokenRepository.getToken(user.getId());
+//        if (existingToken != null) {
+//            tokenRepository.updateToken(user.getId(), tokenDto.getRefreshToken());
+//        } else {
+//            tokenRepository.saveToken(user.getId(), tokenDto.getRefreshToken());
+//        }
+
         Optional<RefreshToken> refreshToken = refreshTokenRepository.findByUsersAccount(user.getAccount());
 
         // 있다면 새토큰 발급후 업데이트
         // 없다면 새로 만들고 디비 저장
         if(refreshToken.isPresent()) {
-            refreshTokenRepository.save(refreshToken.get().updateToken(tokenDto.getAccessToken(), tokenDto.getRefreshToken()));
+            refreshTokenRepository.save(refreshToken.get().updateToken(tokenDto.getRefreshToken()));
         } else {
-            RefreshToken newToken = new RefreshToken(tokenDto.getAccessToken(), tokenDto.getRefreshToken(), user);
+
+            RefreshToken newToken = new RefreshToken(tokenDto.getRefreshToken(), user);
             refreshTokenRepository.save(newToken);
             user.setToken(newToken);
         }
@@ -119,9 +121,9 @@ public class UserService {
                 .phoneNumber(user.getPhoneNumber())
                 .birth(user.getBirth())
                 .betPoint(user.getBetPoint())
-                .firstTeam(user.getFirstTeam())
-                .secondTeam(user.getSecondTeam())
-                .thirdTeam(user.getThirdTeam())
+                .favoriteTeam(user.getFavoriteTeam())
+//                .secondTeam(user.getSecondTeam())
+//                .thirdTeam(user.getThirdTeam())
                 .tokenDto(tokenDto)
                 .build();
 
@@ -137,13 +139,10 @@ public class UserService {
             String account = jwtUtil.getAccountFromToken(token.getRefreshToken());
             Optional<Users> user = userRepository.findByAccount(account);
 
-            System.out.println("account = " + account);
-
             if (user.isEmpty()) {
                 message = new Message("잘못된 계정 정보입니다.");
                 return new ResponseEntity<>(message, HttpStatus.OK);
-            } else
-                System.out.println("유저 있음");
+            }
 
             if (!jwtUtil.refreshTokenValidation(token.getRefreshToken())) {
                 message = new Message("다시 로그인을 해주세요. (refreshToken 검증");
@@ -154,7 +153,11 @@ public class UserService {
             setHeader(response, tokenDto);
 
             Optional<RefreshToken> refreshToken = refreshTokenRepository.findByUsersAccount(account);
-            refreshTokenRepository.save(refreshToken.get().updateToken(tokenDto.getAccessToken(), tokenDto.getRefreshToken()));
+
+            if (refreshToken.isEmpty())
+                return new ResponseEntity<>(new Message("계정에 따른 토큰 정보가 없음"), HttpStatus.OK);
+
+            refreshTokenRepository.save(refreshToken.get().updateToken(tokenDto.getRefreshToken()));
 
             // 테스트 해보자 이 코드
 
@@ -167,18 +170,52 @@ public class UserService {
         }
     }
 
+//    public ResponseEntity<Object> getRefreshTokens(String refreshToken, HttpServletResponse response) {
+//
+//        try {
+//            if(refreshToken == null)
+//                return new ResponseEntity<>(new Message("헤더에 리프레시 토큰 설정 필요"), HttpStatus.OK);
+//
+//            String account = jwtUtil.getAccountFromToken(refreshToken);
+//
+//            if(account == null)
+//                return new ResponseEntity<>(new Message("계정 없음"), HttpStatus.OK);
+//
+//            Optional<Users> getUser = userRepository.findByAccount(account);
+//
+//            if (getUser.isEmpty())
+//                return new ResponseEntity<>(new Message("계정 값에 따른 유저 정보 없음"), HttpStatus.OK);
+//
+//            Users user = getUser.get();
+//
+//            if (!jwtUtil.refreshTokenValidation(refreshToken)) {
+//                return new ResponseEntity<>(new Message("다시 로그인을 해주세요. (refreshToken 검증"), HttpStatus.OK);
+//            }
+//
+//            TokenDTO tokenDto = jwtUtil.createAllToken(user.getAccount());
+//            setHeader(response, tokenDto);
+//
+//            Optional<RefreshToken> getRefreshToken = refreshTokenRepository.findByUsersAccount(user.getAccount());
+//
+//            if (getRefreshToken.isEmpty())
+//                return new ResponseEntity<>(new Message("계정에 따른 토큰 정보가 없음"), HttpStatus.OK);
+//
+//            refreshTokenRepository.save(getRefreshToken.get().updateToken(tokenDto.getRefreshToken()));
+//
+//            // 테스트 해보자 이 코드
+//
+//            return new ResponseEntity<>(tokenDto, HttpStatus.OK);
+//
+//        } catch (Exception e) {
+//
+//            return new ResponseEntity<>(new Message("getRefreshTokens error: " + e), HttpStatus.OK);
+//        }
+//    }
+
     private void setHeader(HttpServletResponse response, TokenDTO tokenDto) {
         response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
         response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
     }
-
-//    // 회원 개인 정보
-//    public Users updateForm(String myLoginId) {
-//
-//        Optional<Users> byAccount = userRepository.findByAccount(myLoginId);
-//
-//        return byAccount.get();
-//    }
 
     public ResponseEntity<Object> update(Users user) {
 
@@ -227,22 +264,29 @@ public class UserService {
         }
     }
 
-    // 회원 탈퇴
-    public ResponseEntity<Object> deleteByUserId(UUID id) {
-
-        Message message;
-
-        try {
-            userRepository.deleteById(id);
-
-            message = new Message("회원 탈퇴 완료");
-            return new ResponseEntity<>(message, HttpStatus.OK);
-
-        } catch (Exception e) {
-            message = new Message("회원 탈퇴 에러 " + e);
-            return new ResponseEntity<>(message, HttpStatus.OK);
-        }
-    }
+    // 회원 탈퇴 ※
+//    public ResponseEntity<Object> deleteByUserId(UUID id) {
+//
+//        Message message;
+//
+//        try {
+//            Optional<Users> userGet = userRepository.findById(id);
+//
+//            if (userGet.isEmpty())
+//                return new ResponseEntity<>(new Message("deleteByUserId error, 아이디 값에 따른 데이터 없음"), HttpStatus.OK);
+//
+//            Users user = userGet.get();
+//
+//            userRepository.deleteById(user.getId());
+//
+//            message = new Message("회원 탈퇴 완료");
+//            return new ResponseEntity<>(message, HttpStatus.OK);
+//
+//        } catch (Exception e) {
+//            message = new Message("회원 탈퇴 에러 " + e);
+//            return new ResponseEntity<>(message, HttpStatus.OK);
+//        }
+//    }
 
     // 아이디 찾기
     public ResponseEntity<Object> findByNameAndBirth(String name, String birth) {
@@ -269,34 +313,33 @@ public class UserService {
         }
     }
 
-    // 유저 개인 정보 가져오기
-    public ResponseEntity<Object> getUserInfo(UUID id, UserDetailsImpl userDetails) {
-
-        Message message;
-
-        try {
-
-            Optional<Users> user = userRepository.findByIdAndAccount(id, userDetails.getUser().getAccount());
-
-            if (user.isEmpty()) {
-
-                message = new Message("유저의 id와 account에 따른 계정 정보 X");
-                return new ResponseEntity<>(message, HttpStatus.OK);
-            } else
-                return new ResponseEntity<>(user.get(), HttpStatus.OK);
-
-        } catch (Exception e) {
-
-            message = new Message("getUserInfo() 에러 " + e);
-            return new ResponseEntity<>(message, HttpStatus.OK);
-        }
-    }
+    // 유저 개인 정보 가져오기 ※
+//    public ResponseEntity<Object> getUserInfo(UUID id, UserDetailsImpl userDetails) {
+//
+//        Message message;
+//
+//        try {
+//
+//            Optional<Users> user = userRepository.findByIdAndAccount(id, userDetails.getUser().getAccount());
+//
+//            if (user.isEmpty()) {
+//
+//                message = new Message("유저의 id와 account에 따른 계정 정보 X");
+//                return new ResponseEntity<>(message, HttpStatus.OK);
+//            } else
+//                return new ResponseEntity<>(user.get(), HttpStatus.OK);
+//
+//        } catch (Exception e) {
+//
+//            message = new Message("getUserInfo() 에러 " + e);
+//            return new ResponseEntity<>(message, HttpStatus.OK);
+//        }
+//    }
 
     // 유저가 베팅한 거 리스트 가져오기
-    public ResponseEntity<Object> getUserBetList(UserDetailsImpl userDetails) {
+    public ResponseEntity<Object> getBetList(UserDetailsImpl userDetails) {
 
         try {
-
             Optional<Users> userGet = userRepository.findById(userDetails.getUser().getId());
 
             if (userGet.isEmpty())
@@ -304,13 +347,98 @@ public class UserService {
 
             Users user = userGet.get();
 
-            List<UserBetPointDTO> userBetPointDTOS = betRepository.findBetsWithPointsByUsersId(user.getId());
+            List<Betting> bettingList = bettingRepository.findAllByUsersId(user.getId());
 
-            // List<UserBetPointDTO> userBetPointDTOS = userRepository.findAll(user.getId());
+            List<UserBetPointDTO> userBetPointDTOS = new ArrayList<>();
+
+            for (Betting oneBetting : bettingList)
+            {
+                UserBetPointDTO dto = UserBetPointDTO.builder()
+                        .id(oneBetting.getBets().getId())
+                        .date(oneBetting.getBets().getFixtures().getDate())
+                        .home(oneBetting.getBets().getFixtures().getHome())
+                        .away(oneBetting.getBets().getFixtures().getAway())
+                        .homeAllocation(oneBetting.getBets().getFixtures().getHomeAllocation())
+                        .awayAllocation(oneBetting.getBets().getFixtures().getAwayAllocation())
+                        .drawAllocation(oneBetting.getBets().getFixtures().getDrawAllocation())
+                        .win(oneBetting.getBets().getWin())
+                        .point(pointRepository.findPointsByBetsIdAndUsers(oneBetting.getBets().getId(), user).get())
+                        .build();
+
+                userBetPointDTOS.add(dto);
+            }
 
             return new ResponseEntity<>(userBetPointDTOS, HttpStatus.OK);
+
         } catch (Exception e) {
-            return new ResponseEntity<>(new Message("getUserBetList error : " + e), HttpStatus.OK);
+
+            return new ResponseEntity<>(new Message("UserService.getBetList error : " + e), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // /detail
+    public ResponseEntity<Object> getUserDetailList(UserDetailsImpl userDetails) {
+
+        try {
+            if (userDetails == null)
+                return new ResponseEntity<>(new Message("UserService.getUserDetailList 인증 정보가 없음"), HttpStatus.OK);
+
+            Optional<Users> userGet = userRepository.findByAccount(userDetails.getUser().getAccount());
+
+            if (userGet.isEmpty())
+                return new ResponseEntity<>(new Message("UserService.getUserDetailList 유저 정보가 없음"), HttpStatus.OK);
+
+            Users user = userGet.get();
+
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        } catch (Exception e) {
+
+            return new ResponseEntity<>(new Message("UserService.getUserDetailList error: " + e), HttpStatus.OK);
+        }
+    }
+
+    // DeleteMapping /
+    public ResponseEntity<Object> deleteUser(UserDetailsImpl userDetails) {
+
+        try {
+            if (userDetails == null)
+                return new ResponseEntity<>(new Message("UserService.deleteUser 인증 정보 없음"), HttpStatus.OK);
+
+            Optional<Users> userGet = userRepository.findByAccount(userDetails.getUser().getAccount());
+
+            if (userGet.isEmpty())
+                return new ResponseEntity<>(new Message("UserService.deleteUser error, account 값에 따른 데이터 없음"), HttpStatus.OK);
+
+            Users user = userGet.get();
+
+            userRepository.deleteById(user.getId());
+
+            return new ResponseEntity<>(new Message("회원 탈퇴 완료"), HttpStatus.OK);
+
+        } catch (Exception e) {
+
+            return new ResponseEntity<>(new Message("UserService.deleteUser error: " + e), HttpStatus.OK);
+        }
+    }
+
+    // 유저가 쓴 게시판 리스트
+    public ResponseEntity<Object> getBoardList(UserDetailsImpl userDetails) {
+
+        try {
+            if (userDetails == null)
+                return new ResponseEntity<>(new Message("UserService.getBoardList error: 인증 정보 없음"), HttpStatus.OK);
+
+            Optional<Users> userGet = userRepository.findByAccount(userDetails.getUser().getAccount());
+
+            if (userGet.isEmpty())
+                return new ResponseEntity<>(new Message("UserService.getBoardList error: 유저 정보 없음"), HttpStatus.OK);
+
+            List<BoardsDTO> boardsDTOList = boardRepository.findByUserId(userGet.get().getId());
+
+            return new ResponseEntity<>(boardsDTOList, HttpStatus.OK);
+        } catch (Exception e) {
+
+            return new ResponseEntity<>(new Message("UserService.getBoardList error: " + e), HttpStatus.OK);
         }
     }
 }

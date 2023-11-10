@@ -49,12 +49,12 @@ public class Boards {
     /** ㅡㅡㅡㅡㅡㅡㅡㅡ **/
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private Users user;
 
     @OneToMany(mappedBy = "heartBoards", cascade = CascadeType.ALL)
-    private List<Heart> hearts;
+    private List<Heart> hearts = new ArrayList<>();
 
     public void addHeart(Heart heart) {
         this.hearts.add(heart);

@@ -12,7 +12,7 @@ public class UserToMainDTO {
 
     private String nickname;
     private Integer betPoint;
-    private String firstTeam;
-    private String secondTeam;
-    private String thirdTeam;
+    private String favoriteTeam;
+//    private String secondTeam;
+//    private String thirdTeam;
 }

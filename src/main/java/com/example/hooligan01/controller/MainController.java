@@ -3,9 +3,11 @@ package com.example.hooligan01.controller;
 import com.example.hooligan01.dto.*;
 import com.example.hooligan01.entity.Fixtures;
 import com.example.hooligan01.entity.Users;
+import com.example.hooligan01.repository.UserRepository;
 import com.example.hooligan01.security.UserDetailsImpl;
 import com.example.hooligan01.service.FixtureService;
 import com.example.hooligan01.service.UserService;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -29,7 +31,7 @@ import java.util.List;
 @RequestMapping("/main")
 public class MainController {
 
-    private final UserService userService;
+    private final UserRepository userRepository;
     private final FixtureService fixtureService;
 
     // 뉴스, 경기 최신 약 5개, 프로필 및 게시판 사진
@@ -87,14 +89,14 @@ public class MainController {
                 fixtureDTOList.add(dto);
             }
 
-            Users users = userService.findById(userDetails.getUser().getId());
+            Optional<Users> userGet = userRepository.findById(userDetails.getUser().getId());
+
+            Users users = userGet.get();
 
             UserToMainDTO user = UserToMainDTO.builder()
                     .nickname(users.getNickname())
                     .betPoint(users.getBetPoint())
-                    .firstTeam(users.getFirstTeam())
-                    .secondTeam(users.getSecondTeam())
-                    .thirdTeam(users.getThirdTeam())
+                    .favoriteTeam(users.getFavoriteTeam())
                     .build();
 
             MainDTO mainDTO = MainDTO.builder()

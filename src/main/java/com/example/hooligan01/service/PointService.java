@@ -2,9 +2,11 @@ package com.example.hooligan01.service;
 
 import com.example.hooligan01.dto.Message;
 import com.example.hooligan01.entity.Bets;
+import com.example.hooligan01.entity.Betting;
 import com.example.hooligan01.entity.Points;
 import com.example.hooligan01.entity.Users;
 import com.example.hooligan01.repository.BetRepository;
+import com.example.hooligan01.repository.BettingRepository;
 import com.example.hooligan01.repository.PointRepository;
 import com.example.hooligan01.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ public class PointService {
     private final PointRepository pointRepository;
     private final BetRepository betRepository;
     private final UserRepository userRepository;
+    private final BettingRepository bettingRepository;
 
     public ResponseEntity<Object> saveBetting(UUID id, Points point, Users getUser) {
 
@@ -65,8 +68,14 @@ public class PointService {
                 pointRepository.save(point);
 
                 // 베팅 엔티티를 저장 (포인트 엔티티에 참조가 설정되어야 함)
-                updateBet.setUser(user);
                 betRepository.save(updateBet);
+
+                Betting betting = Betting.builder()
+                        .users(user)
+                        .bets(updateBet)
+                        .build();
+
+                bettingRepository.save(betting);
 
                 return new ResponseEntity<>(point, HttpStatus.OK);
             } else {
@@ -78,24 +87,4 @@ public class PointService {
             return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
         }
     }
-
-//    public ResponseEntity<Objects> getReword(UUID id, Users user) {
-//
-//        Optional<Points> point = pointRepository.findPointsByBetsIdAndUsers(id, user);
-//
-//        if (point.isEmpty()) {
-//
-//            Message message = new Message("배팅 안함");
-//            return new ResponseEntity<>(message, HttpStatus.OK);
-//        }
-//
-//        Optional<Bets> bet = betRepository.findById(id);
-//
-//        int allBetPoint = bet.get().getHomePoint() + bet.get().getAwayPoint();
-//
-//        if (point.get().getResult() == true) {
-//            user.setBetPoint(user.getBetPoint() + (allBetPoint));
-//        }
-//
-//    }
 }

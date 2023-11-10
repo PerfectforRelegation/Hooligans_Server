@@ -25,7 +25,7 @@ public class FixtureController {
 
     @GetMapping("/table")
     public ResponseEntity<Object> leagueTable() throws Exception {
-        JSONParser parser = new JSONParser();//
+        JSONParser parser = new JSONParser();//"C:/Users/jody8/OneDrive/바탕 화면/fixtures.json"
         Reader reader = new FileReader("/home/ubuntu/crawling_python/fixtures.json");
         JSONObject jsonObject = (JSONObject) parser.parse(reader);
 

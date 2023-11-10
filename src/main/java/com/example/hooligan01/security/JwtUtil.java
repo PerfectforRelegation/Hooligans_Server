@@ -31,8 +31,8 @@ public class JwtUtil {
     private final UserDetailsServiceImpl userDetailsService;
     private final RefreshTokenRepository refreshTokenRepository;
 
-    private static final long ACCESS_TIME = 60 * 60 * 1000L;
-    private static final long REFRESH_TIME =  2 * 60 * 60 * 1000L;
+    private static final long ACCESS_TIME = 60 * 60 * 1000L; //14일
+    private static final long REFRESH_TIME =  40 * 1000L; // 걍 유지
     public static final String ACCESS_TOKEN = "Access_Token";
     public static final String REFRESH_TOKEN = "Refresh_Token";
 
@@ -87,7 +87,7 @@ public class JwtUtil {
     // db에 저장되어 있는 token과 비교
     // db에 저장한다는 것이 jwt token을 사용한다는 강점을 상쇄시킨다.
     // db 보다는 redis를 사용하는 것이 더욱 좋다. (in-memory db기 때문에 조회속도가 빠르고 주기적으로 삭제하는 기능이 기본적으로 존재합니다.)
-    public Boolean refreshTokenValidation(String token) {
+    public Boolean refreshTokenValidation(String token) {   // ※
 
         // 1차 토큰 검증
         if(!tokenValidation(token)) return false;
@@ -97,6 +97,21 @@ public class JwtUtil {
 
         return refreshToken.isPresent() && token.equals(refreshToken.get().getRefreshToken());
     }
+
+//    /**
+//     ----------------------------------------------
+//     **/
+//    public Boolean refreshTokenValidationFromRedis(String token) {
+//
+//        if (!tokenValidation(token)) return false;
+//
+//        Token refreshToken = tokenRepository.findTokenByValue(token);
+//
+//        return refreshToken != null && token.equals(refreshToken.getRefreshToken());
+//    }
+//    /**
+//     ----------------------------------------------
+//     **/
 
     // 인증 객체 생성
     public Authentication createAuthentication(String account) {

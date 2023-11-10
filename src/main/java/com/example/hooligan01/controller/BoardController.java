@@ -40,19 +40,6 @@ public class BoardController {
         return boardService.enroll(board);
     }
 
-    // 게시글 등록
-//    @PostMapping("/write")
-//    public Boolean boardWrite(@RequestBody Boards board, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-//
-//        Users user = userDetails.getUser();
-//
-//        board.setUser(user);
-//
-//        boardService.write(board);
-//
-//        return true;
-//    }
-
     // 게시글 상세보기(수정 및 삭제...?)  view 값 오름
     @GetMapping("/detail/{id}")
     public ResponseEntity<Object> boardDetail(@PathVariable Long id) {
