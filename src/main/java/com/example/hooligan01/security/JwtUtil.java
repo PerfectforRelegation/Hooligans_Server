@@ -31,8 +31,8 @@ public class JwtUtil {
     private final UserDetailsServiceImpl userDetailsService;
     private final RefreshTokenRepository refreshTokenRepository;
 
-    private static final long ACCESS_TIME = 60 * 60 * 1000L; //14일
-    private static final long REFRESH_TIME =  600000 * 1000L; // 걍 유지
+    private static final long ACCESS_TIME = 14 * 24 * 60 * 60 * 1000L; //14일
+    private static final long REFRESH_TIME = 365 * 24 * 60 * 60 * 1000L; // 1년
     public static final String ACCESS_TOKEN = "Access_Token";
     public static final String REFRESH_TOKEN = "Refresh_Token";
 

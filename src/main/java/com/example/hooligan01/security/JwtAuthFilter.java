@@ -40,10 +40,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 // 리프레시 토큰 검증 && 리프레시 토큰 DB에서  토큰 존재유무 확인
                 boolean isRefreshToken = jwtUtil.refreshTokenValidation(refreshToken);
 
-
-                // boolean isRefreshToken = jwtUtil.refreshTokenValidationFromRedis(refreshToken);
-
-
                 // 리프레시 토큰이 유효하고 리프레시 토큰이 DB와 비교했을때 똑같다면
                 if (isRefreshToken) {
                     // 리프레시 토큰으로 아이디 정보 가져오기
