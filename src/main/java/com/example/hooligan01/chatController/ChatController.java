@@ -35,7 +35,6 @@ public class ChatController {
             System.out.println(chatMessage.getMessage().toString());
         }
 
-        chatMessage.setUserCount(chatRoomRepository.getUserCount(chatRoomId));
         redisPublisher.publish(chatMessage.getRoomId(), chatMessage);
     }
 
