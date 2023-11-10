@@ -4,6 +4,7 @@ import com.example.hooligan01.dto.ImageDTO;
 import com.example.hooligan01.dto.Message;
 import java.nio.file.Files;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -56,11 +57,13 @@ public class ImageController {
         }
     }
 
-    @GetMapping("/{filename}")
-    public ResponseEntity<Object> getImage(@PathVariable String filename) {
+    @GetMapping("/{filepath}")
+    public ResponseEntity<Object> getImage(@PathVariable String filepath) {
 
         try {
-            Resource resource = new ClassPathResource("static/files/" + filename);
+
+            String path = "/home/ubuntu/Hooligans_Server/src/main/resources/static";
+            FileSystemResource resource = new FileSystemResource(path + filepath);
 
             byte[] imageBytes = Files.readAllBytes(resource.getFile().toPath());
 
