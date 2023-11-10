@@ -10,8 +10,6 @@ import com.example.hooligan01.repository.PointRepository;
 import com.example.hooligan01.repository.UserRepository;
 import com.example.hooligan01.security.UserDetailsImpl;
 import com.example.hooligan01.service.FixtureService;
-import com.example.hooligan01.service.UserService;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +19,6 @@ import org.json.simple.parser.JSONParser;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -130,27 +127,12 @@ public class MainController {
                     .home(oneBetting.getBets().getFixtures().getHome())
                     .away(oneBetting.getBets().getFixtures().getAway())
                     .allocation(oneBetting.getBets().getAllocation())
+                    .point(points.getBetPoint())
                     .win(oneBetting.getBets().getWin())
                     .getReward(reward)
                     .build();
 
                 userBetToMainDTOS.add(dto);
-
-//                if (oneBetting.getBets().getWin().equals(points.getPick())
-//                    && !points.isResult()) {
-//
-//                    UserBetToMainDTO dto = UserBetToMainDTO.builder()
-//                        .betId(oneBetting.getBets().getId())
-//                        .date(oneBetting.getBets().getFixtures().getDate())
-//                        .home(oneBetting.getBets().getFixtures().getHome())
-//                        .away(oneBetting.getBets().getFixtures().getAway())
-//                        .allocation(oneBetting.getBets().getAllocation())
-//                        .win(oneBetting.getBets().getWin())
-//                        .getReward(points.isResult())
-//                        .build();
-//
-//                    userBetToMainDTOS.add(dto);
-//                }
             }
 
             if (userBetToMainDTOS.size() > 0)

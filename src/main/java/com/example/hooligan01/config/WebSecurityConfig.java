@@ -51,7 +51,7 @@ public class WebSecurityConfig {
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        http.authorizeRequests().antMatchers("/ws", "/ws-stomp", "/user/join", "/user/login",
+        http.authorizeRequests().antMatchers("/ws", "/ws-stomp", "/ws/**", "/ws-stomp/**", "/user/join", "/user/login",
                         "/fixture/**", "/team/**", "/user/refresh", "match/table", "/news/list",
                         "/user/findId", "/user/findPassword", "/bet/list",
                         "/board/list", "/board/detail/**").permitAll()
