@@ -78,10 +78,29 @@ public class BoardService {
     public ResponseEntity<Object> update(Boards boards) {
 
         try {
-            if (!boards.isModified())
-                boards.setModified(true);
+            Optional<Boards> boardGet = boardRepository.findById(boards.getId());
 
-            boardRepository.save(boards);
+            if (boardGet.isEmpty())
+                return new ResponseEntity<>(new Message("BoardService.update 에러, 아이디 값에 따른 게시판 데이터 없음"), HttpStatus.OK);
+
+            Boards board = boardGet.get();
+
+            if (!board.isModified())
+                board.setModified(true);
+
+            if (boards.getTitle() != null)
+                board.setTitle(boards.getTitle());
+
+            if (boards.getContent() != null)
+                board.setContent(boards.getContent());
+
+            if (boards.getFilename() != null)
+                board.setFilename(boards.getFilename());
+
+            if (boards.getFilepath() != null)
+                board.setFilepath(boards.getFilepath());
+
+            boardRepository.save(board);
 
             return new ResponseEntity<>(new Message("게시판 수정 완료"), HttpStatus.OK);
 
