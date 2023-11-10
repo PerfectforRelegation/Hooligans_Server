@@ -27,7 +27,7 @@ public class ImageController {
 //            String projectPath = System.getProperty("user.dir")
 //                    + "/src/main/resources/static/files";
 
-            String projectPath = "/home/ubuntu/Hooligans_Server/src/main/resources/image/files";
+            String projectPath = "/home/ubuntu/Hooligans_Server/src/main/resources/static/files";
 
             UUID uuid = UUID.randomUUID();
 
