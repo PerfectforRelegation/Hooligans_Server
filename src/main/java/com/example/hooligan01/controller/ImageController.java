@@ -57,13 +57,13 @@ public class ImageController {
         }
     }
 
-    @GetMapping("/{filepath}")
-    public ResponseEntity<Object> getImage(@PathVariable String filepath) {
+    @GetMapping("/{filename}")
+    public ResponseEntity<Object> getImage(@PathVariable String filename) {
 
         try {
 
-            String path = "/home/ubuntu/Hooligans_Server/src/main/resources/static";
-            FileSystemResource resource = new FileSystemResource(path + filepath);
+            String path = "/home/ubuntu/Hooligans_Server/src/main/resources/static/files/";
+            FileSystemResource resource = new FileSystemResource(path + filename);
 
             byte[] imageBytes = Files.readAllBytes(resource.getFile().toPath());
 
