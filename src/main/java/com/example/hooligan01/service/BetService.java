@@ -93,6 +93,9 @@ public class BetService {
         else
             bet.setAllocation(fixture.getDrawAllocation());
 
+        if (!point.getPick().equals(bet.getWin()))
+            return new ResponseEntity<>(new Message("베팅 실패로 인한 수취 불가"), HttpStatus.OK);
+
         // 유저가 베팅을 했을 때 마이너스
         int updatePoint = (int) (user.getBetPoint() + (point.getBetPoint() * bet.getAllocation()));
         user.setBetPoint(updatePoint);

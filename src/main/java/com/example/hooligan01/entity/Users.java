@@ -1,6 +1,5 @@
 package com.example.hooligan01.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -39,14 +38,14 @@ public class Users {
     @Column(nullable = false)
     private String birth;
 
-    @Column
-    private String firstTeam;
+    @Column(nullable = false)
+    private String favoriteTeam;
 
-    @Column
-    private String secondTeam;
-
-    @Column
-    private String thirdTeam;
+//    @Column
+//    private String secondTeam;
+//
+//    @Column
+//    private String thirdTeam;
 
     @Column
     private int betPoint;
@@ -59,7 +58,7 @@ public class Users {
     private String filepath;
     /** ㅡㅡㅡㅡㅡㅡㅡㅡ **/
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Boards> boards = new ArrayList<>();
 
     public void addBoard(Boards board) {
@@ -75,13 +74,8 @@ public class Users {
         heart.setHeartUsers(this);
     }
 
-//    @JsonIgnore
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "bet_id")
-//    private Bets bet;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Bets> bets = new ArrayList<>();
+    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
+    private List<Betting> betting = new ArrayList<>();
 
     @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
     private List<Points> points = new ArrayList<>();

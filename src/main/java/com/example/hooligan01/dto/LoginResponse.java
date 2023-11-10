@@ -21,9 +21,9 @@ public class LoginResponse {
     private String phoneNumber;
     private String birth;
     private int betPoint;
-    private String firstTeam;
-    private String secondTeam;
-    private String thirdTeam;
+    private String favoriteTeam;
+//    private String secondTeam;
+//    private String thirdTeam;
 
     private TokenDTO tokenDto;
 }

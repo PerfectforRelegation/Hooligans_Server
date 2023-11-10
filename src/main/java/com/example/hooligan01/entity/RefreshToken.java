@@ -20,9 +20,6 @@ public class RefreshToken {
     private UUID id;
 
     @Column(nullable = false)
-    private String accessToken;
-
-    @Column(nullable = false)
     private String refreshToken;
 
     @JsonIgnore
@@ -30,14 +27,12 @@ public class RefreshToken {
     @JoinColumn(name = "user_id")
     private Users users;
 
-    public RefreshToken(String accessToken, String refreshToken, Users user) {
-        this.accessToken = accessToken;
+    public RefreshToken(String refreshToken, Users user) {
         this.refreshToken = refreshToken;
         this.users = user;
     }
 
-    public RefreshToken updateToken(String accessToken, String refreshToken) {
-        this.accessToken = accessToken;
+    public RefreshToken updateToken(String refreshToken) {
         this.refreshToken = refreshToken;
         return this;
     }

@@ -35,18 +35,8 @@ public class Bets {
     @Column(columnDefinition = "double default 0")
     private Double allocation;
 
-//    @OneToMany(mappedBy = "bet", cascade = CascadeType.ALL)
-//    private List<Users> users = new ArrayList<>();
-//
-//    public void addUser(Users user) {
-//        this.users.add(user);
-//        user.setBet(this);
-//    }
-
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private Users user;
+    @OneToMany(mappedBy = "bets", cascade = CascadeType.ALL)
+    private List<Betting> betting = new ArrayList<>();
 
     @OneToMany(mappedBy = "bets")
     private List<Points> points = new ArrayList<>();
