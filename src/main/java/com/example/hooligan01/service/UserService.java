@@ -95,29 +95,26 @@ public class UserService {
 
             TokenDTO tokenDto = jwtUtil.createAllToken(user.getAccount());
 
-            // redis
-//        Token existingToken = tokenRepository.getToken(user.getId());
-//        if (existingToken != null) {
-//            tokenRepository.updateToken(user.getId(), tokenDto.getRefreshToken());
-//        } else {
-//            tokenRepository.saveToken(user.getId(), tokenDto.getRefreshToken());
-//        }
-
             Optional<RefreshToken> refreshToken = refreshTokenRepository.findByUsersAccount(user.getAccount());
 
             // 있다면 새토큰 발급후 업데이트
             // 없다면 새로 만들고 디비 저장
-            if(refreshToken.isPresent()) {
-                refreshTokenRepository.save(refreshToken.get().updateToken(tokenDto.getRefreshToken()));
-            } else {
-
+            if(refreshToken.isEmpty()) {
+//                refreshTokenRepository.save(refreshToken.get().updateToken(tokenDto.getRefreshToken()));
                 RefreshToken newToken = new RefreshToken(tokenDto.getRefreshToken(), user);
                 refreshTokenRepository.save(newToken);
                 user.setToken(newToken);
-            }
 
-            // response 헤더에 Access Token / Refresh Token 넣음
-            setHeader(response, tokenDto);
+                // response 헤더에 Access Token / Refresh Token 넣음
+                setHeader(response, tokenDto);
+            } else {
+
+                TokenDTO dto = TokenDTO.builder()
+                    .accessToken(tokenDto.getAccessToken())
+                    .refreshToken(refreshToken.get().getRefreshToken())
+                    .build();
+                setHeader(response, dto);
+            }
 
             LoginResponse loginResponse =  LoginResponse.builder()
                 .id(user.getId())
@@ -129,8 +126,6 @@ public class UserService {
                 .birth(user.getBirth())
                 .betPoint(user.getBetPoint())
                 .favoriteTeam(user.getFavoriteTeam())
-//                .secondTeam(user.getSecondTeam())
-//                .thirdTeam(user.getThirdTeam())
                 .tokenDto(tokenDto)
                 .build();
 
@@ -169,8 +164,6 @@ public class UserService {
 
             refreshTokenRepository.save(refreshToken.get().updateToken(tokenDto.getRefreshToken()));
 
-            // 테스트 해보자 이 코드
-
             return new ResponseEntity<>(tokenDto, HttpStatus.OK);
 
         } catch (Exception e) {
@@ -179,48 +172,6 @@ public class UserService {
             return new ResponseEntity<>(message, HttpStatus.OK);
         }
     }
-
-//    public ResponseEntity<Object> getRefreshTokens(String refreshToken, HttpServletResponse response) {
-//
-//        try {
-//            if(refreshToken == null)
-//                return new ResponseEntity<>(new Message("헤더에 리프레시 토큰 설정 필요"), HttpStatus.OK);
-//
-//            String account = jwtUtil.getAccountFromToken(refreshToken);
-//
-//            if(account == null)
-//                return new ResponseEntity<>(new Message("계정 없음"), HttpStatus.OK);
-//
-//            Optional<Users> getUser = userRepository.findByAccount(account);
-//
-//            if (getUser.isEmpty())
-//                return new ResponseEntity<>(new Message("계정 값에 따른 유저 정보 없음"), HttpStatus.OK);
-//
-//            Users user = getUser.get();
-//
-//            if (!jwtUtil.refreshTokenValidation(refreshToken)) {
-//                return new ResponseEntity<>(new Message("다시 로그인을 해주세요. (refreshToken 검증"), HttpStatus.OK);
-//            }
-//
-//            TokenDTO tokenDto = jwtUtil.createAllToken(user.getAccount());
-//            setHeader(response, tokenDto);
-//
-//            Optional<RefreshToken> getRefreshToken = refreshTokenRepository.findByUsersAccount(user.getAccount());
-//
-//            if (getRefreshToken.isEmpty())
-//                return new ResponseEntity<>(new Message("계정에 따른 토큰 정보가 없음"), HttpStatus.OK);
-//
-//            refreshTokenRepository.save(getRefreshToken.get().updateToken(tokenDto.getRefreshToken()));
-//
-//            // 테스트 해보자 이 코드
-//
-//            return new ResponseEntity<>(tokenDto, HttpStatus.OK);
-//
-//        } catch (Exception e) {
-//
-//            return new ResponseEntity<>(new Message("getRefreshTokens error: " + e), HttpStatus.OK);
-//        }
-//    }
 
     private void setHeader(HttpServletResponse response, TokenDTO tokenDto) {
         response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
@@ -273,30 +224,6 @@ public class UserService {
             return new ResponseEntity<>(message, HttpStatus.OK);
         }
     }
-
-    // 회원 탈퇴 ※
-//    public ResponseEntity<Object> deleteByUserId(UUID id) {
-//
-//        Message message;
-//
-//        try {
-//            Optional<Users> userGet = userRepository.findById(id);
-//
-//            if (userGet.isEmpty())
-//                return new ResponseEntity<>(new Message("deleteByUserId error, 아이디 값에 따른 데이터 없음"), HttpStatus.OK);
-//
-//            Users user = userGet.get();
-//
-//            userRepository.deleteById(user.getId());
-//
-//            message = new Message("회원 탈퇴 완료");
-//            return new ResponseEntity<>(message, HttpStatus.OK);
-//
-//        } catch (Exception e) {
-//            message = new Message("회원 탈퇴 에러 " + e);
-//            return new ResponseEntity<>(message, HttpStatus.OK);
-//        }
-//    }
 
     // 아이디 찾기
     public ResponseEntity<Object> findByNameAndBirth(String name, String birth) {

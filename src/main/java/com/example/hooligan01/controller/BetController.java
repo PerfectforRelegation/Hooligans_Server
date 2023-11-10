@@ -42,9 +42,9 @@ public class BetController {
     }
 
     // 수취 api, bet 아이디 값
-    @PutMapping("/reward/{id}")
-    public ResponseEntity<Object> getReward(@PathVariable UUID id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    @PutMapping("/reward")
+    public ResponseEntity<Object> getReward(@RequestBody Bets bets, @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        return betService.getReward(id, userDetails);
+        return betService.getReward(bets.getId(), userDetails);
     }
 }

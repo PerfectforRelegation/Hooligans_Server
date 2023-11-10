@@ -18,4 +18,5 @@ public class UserBetToMainDTO {
   private String away;
   private Double allocation;
   private String win;
+  private boolean getReward;
 }

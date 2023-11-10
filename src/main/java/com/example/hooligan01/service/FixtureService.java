@@ -79,6 +79,16 @@ public class FixtureService {
                                     updateFixture.getAway() : "DRAW";
                             bet.setWin(win);
 
+                            double allocation;
+
+                            if (win.equals(updateFixture.getHome()))
+                                allocation = updateFixture.getHomeAllocation();
+                            else if (win.equals(updateFixture.getAway()))
+                                allocation = updateFixture.getAwayAllocation();
+                            else
+                                allocation = updateFixture.getDrawAllocation();
+
+                            bet.setAllocation(allocation);
                             betRepository.save(bet);
                         }
                     }

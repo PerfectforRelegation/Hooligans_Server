@@ -40,21 +40,12 @@ public class UserController {
         return userService.login(user, response);
     }
 
-    //------------------------------------
     // 토큰 재발급
-    // ※
     @PostMapping("/refresh")
     public ResponseEntity<Object> getRefreshToken(@RequestBody TokenDTO tokenDto, HttpServletResponse response) {
 
         return userService.refreshAccessToken(tokenDto, response);
     }
-//    @PutMapping("/refreshTest")
-//    public ResponseEntity<Object> getRefreshTokenTest(@RequestHeader("Refresh_Token") String refreshToken, HttpServletResponse response) {
-//
-//        return userService.getRefreshTokens(refreshToken, response);
-//    }
-
-    //-------------------------------------
 
     // 아이디 찾기(이름과 생일를 받음)
     // 수정 필요!!

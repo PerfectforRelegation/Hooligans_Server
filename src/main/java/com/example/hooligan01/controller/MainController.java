@@ -3,12 +3,16 @@ package com.example.hooligan01.controller;
 import com.example.hooligan01.dto.*;
 import com.example.hooligan01.entity.Betting;
 import com.example.hooligan01.entity.Fixtures;
+import com.example.hooligan01.entity.Points;
 import com.example.hooligan01.entity.Users;
 import com.example.hooligan01.repository.BettingRepository;
+import com.example.hooligan01.repository.PointRepository;
 import com.example.hooligan01.repository.UserRepository;
 import com.example.hooligan01.security.UserDetailsImpl;
 import com.example.hooligan01.service.FixtureService;
 import com.example.hooligan01.service.UserService;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
@@ -17,6 +21,7 @@ import org.json.simple.parser.JSONParser;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,13 +41,14 @@ public class MainController {
     private final UserRepository userRepository;
     private final FixtureService fixtureService;
     private final BettingRepository bettingRepository;
+    private final PointRepository pointRepository;
 
     // 뉴스, 경기 최신 약 5개, 프로필 및 게시판 사진
     @GetMapping
     public ResponseEntity<Object> getMain(@AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         try {
-            // 뉴스 리스트 불러오기 //"C:/Users/jody8/OneDrive/바탕 화면/news.json"
+            // 뉴스 리스트 불러오기 //"/home/ubuntu/crawling_python/news.json""C:/Users/jody8/OneDrive/바탕 화면/news.json"
             JSONParser parser = new JSONParser();//
             Reader reader = new InputStreamReader(new FileInputStream("/home/ubuntu/crawling_python/news.json"), StandardCharsets.UTF_8);
             JSONObject jsonObject = (JSONObject) parser.parse(reader);
@@ -109,21 +115,41 @@ public class MainController {
 
             for (Betting oneBetting : bettingList)
             {
-                if (oneBetting.getBets().getWin().equals(oneBetting.getBets().getPoints().get(0).getPick())
-                    && !oneBetting.getBets().getPoints().get(0).isResult()) {
+                Points points = pointRepository.findPointsByBetsIdAndUsers(oneBetting.getBets().getId(), users).get();
 
-                    UserBetToMainDTO dto = UserBetToMainDTO.builder()
-                        .betId(oneBetting.getBets().getId())
-                        .date(oneBetting.getBets().getFixtures().getDate())
-                        .home(oneBetting.getBets().getFixtures().getHome())
-                        .away(oneBetting.getBets().getFixtures().getAway())
-                        .allocation(oneBetting.getBets().getAllocation())
-                        .win(oneBetting.getBets().getWin())
-                        .build();
+                boolean reward = oneBetting.getBets().getWin().equals(points.getPick()) && !points.isResult();
 
-                    userBetToMainDTOS.add(dto);
-                }
+                UserBetToMainDTO dto = UserBetToMainDTO.builder()
+                    .betId(oneBetting.getBets().getId())
+                    .date(oneBetting.getBets().getFixtures().getDate())
+                    .home(oneBetting.getBets().getFixtures().getHome())
+                    .away(oneBetting.getBets().getFixtures().getAway())
+                    .allocation(oneBetting.getBets().getAllocation())
+                    .win(oneBetting.getBets().getWin())
+                    .getReward(reward)
+                    .build();
+
+                userBetToMainDTOS.add(dto);
+
+//                if (oneBetting.getBets().getWin().equals(points.getPick())
+//                    && !points.isResult()) {
+//
+//                    UserBetToMainDTO dto = UserBetToMainDTO.builder()
+//                        .betId(oneBetting.getBets().getId())
+//                        .date(oneBetting.getBets().getFixtures().getDate())
+//                        .home(oneBetting.getBets().getFixtures().getHome())
+//                        .away(oneBetting.getBets().getFixtures().getAway())
+//                        .allocation(oneBetting.getBets().getAllocation())
+//                        .win(oneBetting.getBets().getWin())
+//                        .getReward(points.isResult())
+//                        .build();
+//
+//                    userBetToMainDTOS.add(dto);
+//                }
             }
+
+            if (userBetToMainDTOS.size() > 0)
+                userBetToMainDTOS.sort(Comparator.comparing(UserBetToMainDTO::getDate).reversed());
 
             MainDTO mainDTO = MainDTO.builder()
                 .user(user)
