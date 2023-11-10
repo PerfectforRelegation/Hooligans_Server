@@ -58,6 +58,12 @@ public class UserService {
                     .build();
         }
 
+        if (userRepository.findByNickname(inputUser.getNickname()).isPresent()) {
+            return Message.builder()
+                .message("닉네임 중복")
+                .build();
+        }
+
         inputUser.setPassword(passwordEncoder.encode(inputUser.getPassword()));
 
         if (inputUser.getBetPoint() == 0)
