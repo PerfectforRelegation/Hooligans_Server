@@ -45,18 +45,6 @@ public class RedisConfig {
         return redisTemplate;
     }
 
-//    // redis 에 토큰 저장을 위한 템플릿
-//    @Bean
-//    public RedisTemplate<String, Token> redisTemplateForToken(RedisConnectionFactory redisConnectionFactory) {
-//        RedisTemplate<String, Token> redisTemplate = new RedisTemplate<>();
-//        redisTemplate.setConnectionFactory(redisConnectionFactory);
-//        redisTemplate.setKeySerializer(new StringRedisSerializer());
-//        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
-//        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(Token.class)); // Jackson Serializer를 사용
-//        redisTemplate.setHashValueSerializer(new Jackson2JsonRedisSerializer<>(Token.class));
-//        return redisTemplate;
-//    }
-
     @Bean
     public ChannelTopic channelTopic() {
         return new ChannelTopic("chatroom");

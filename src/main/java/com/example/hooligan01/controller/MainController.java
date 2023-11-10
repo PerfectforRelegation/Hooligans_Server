@@ -1,8 +1,10 @@
 package com.example.hooligan01.controller;
 
 import com.example.hooligan01.dto.*;
+import com.example.hooligan01.entity.Betting;
 import com.example.hooligan01.entity.Fixtures;
 import com.example.hooligan01.entity.Users;
+import com.example.hooligan01.repository.BettingRepository;
 import com.example.hooligan01.repository.UserRepository;
 import com.example.hooligan01.security.UserDetailsImpl;
 import com.example.hooligan01.service.FixtureService;
@@ -33,6 +35,7 @@ public class MainController {
 
     private final UserRepository userRepository;
     private final FixtureService fixtureService;
+    private final BettingRepository bettingRepository;
 
     // 뉴스, 경기 최신 약 5개, 프로필 및 게시판 사진
     @GetMapping
@@ -99,11 +102,35 @@ public class MainController {
                     .favoriteTeam(users.getFavoriteTeam())
                     .build();
 
+            // 베팅 리스트
+            List<UserBetToMainDTO> userBetToMainDTOS = new ArrayList<>();
+
+            List<Betting> bettingList = bettingRepository.findAllByUsersId(users.getId());
+
+            for (Betting oneBetting : bettingList)
+            {
+                if (oneBetting.getBets().getWin().equals(oneBetting.getBets().getPoints().get(0).getPick())
+                    && !oneBetting.getBets().getPoints().get(0).isResult()) {
+
+                    UserBetToMainDTO dto = UserBetToMainDTO.builder()
+                        .betId(oneBetting.getBets().getId())
+                        .date(oneBetting.getBets().getFixtures().getDate())
+                        .home(oneBetting.getBets().getFixtures().getHome())
+                        .away(oneBetting.getBets().getFixtures().getAway())
+                        .allocation(oneBetting.getBets().getAllocation())
+                        .win(oneBetting.getBets().getWin())
+                        .build();
+
+                    userBetToMainDTOS.add(dto);
+                }
+            }
+
             MainDTO mainDTO = MainDTO.builder()
-                    .user(user)
-                    .fixtures(fixtureDTOList)
-                    .news(news)
-                    .build();
+                .user(user)
+                .fixtures(fixtureDTOList)
+                .bet(userBetToMainDTOS)
+                .news(news)
+                .build();
 
             return new ResponseEntity<>(mainDTO, HttpStatus.OK);
         } catch (Exception e) {
