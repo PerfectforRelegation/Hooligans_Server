@@ -14,5 +14,6 @@ public class MainDTO {
 
     private UserToMainDTO user;
     private List<FixtureDTO> fixtures;
+    private List<UserBetToMainDTO> bet;
     private NewsDTO news;
 }

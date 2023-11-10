@@ -1,11 +1,9 @@
 package com.example.hooligan01.repository;
 
-import com.example.hooligan01.dto.UserBetPointDTO;
 import com.example.hooligan01.entity.Points;
 import com.example.hooligan01.entity.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 

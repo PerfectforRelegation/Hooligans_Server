@@ -50,51 +50,52 @@ public class UserService {
 //                HttpStatus.OK));
 //    }
 
-    public Message join(Users inputUser) {
+    public ResponseEntity<Object> join(Users inputUser) {
 
-        if (userRepository.findByAccount(inputUser.getAccount()).isPresent()) {
-            return Message.builder()
-                    .message("아이디 중복")
-                    .build();
+        try {
+            Optional<Users> userGet = userRepository.findByAccount(inputUser.getAccount());
+            if (userGet.isPresent())
+                return new ResponseEntity<>(new Message("아이디 중복"), HttpStatus.OK);
+
+            Optional<Users> userGet2 = userRepository.findByNickname(inputUser.getNickname());
+            if (userGet2.isPresent())
+                return new ResponseEntity<>(new Message("닉네임 중복"), HttpStatus.OK);
+
+            inputUser.setPassword(passwordEncoder.encode(inputUser.getPassword()));
+
+            if (inputUser.getBetPoint() == 0)
+                inputUser.setBetPoint(5000);
+
+            userRepository.save(inputUser);
+
+            return new ResponseEntity<>(new Message("회원가입 성공"), HttpStatus.OK);
+        } catch (Exception e) {
+
+            return new ResponseEntity<>(new Message("회원가입 에러: " + e), HttpStatus.OK);
         }
-
-        if (userRepository.findByNickname(inputUser.getNickname()).isPresent()) {
-            return Message.builder()
-                .message("닉네임 중복")
-                .build();
-        }
-
-        inputUser.setPassword(passwordEncoder.encode(inputUser.getPassword()));
-
-        if (inputUser.getBetPoint() == 0)
-            inputUser.setBetPoint(5000);
-
-        userRepository.save(inputUser);
-        return Message.builder()
-                .message("회원가입 성공")
-                .build();
     }
 
     public ResponseEntity<Object> login(Users inputUser, HttpServletResponse response) {
 
-        Users user;
+        try {
+            Users user;
 
-        Optional<Users> userCheck = userRepository.findByAccount(inputUser.getAccount());
+            Optional<Users> userCheck = userRepository.findByAccount(inputUser.getAccount());
 
-        if (userCheck.isEmpty()) {
-            Message message = new Message("아이디 없음");
-            return new ResponseEntity<>(message, HttpStatus.OK);
-        } else
-            user = userCheck.get();
+            if (userCheck.isEmpty()) {
+                Message message = new Message("아이디 없음");
+                return new ResponseEntity<>(message, HttpStatus.OK);
+            } else
+                user = userCheck.get();
 
-        if (!passwordEncoder.matches(inputUser.getPassword(), user.getPassword())) {
-            Message message = new Message("비밀번호 불일치");
-            return new ResponseEntity<>(message, HttpStatus.OK);
-        }
+            if (!passwordEncoder.matches(inputUser.getPassword(), user.getPassword())) {
+                Message message = new Message("비밀번호 불일치");
+                return new ResponseEntity<>(message, HttpStatus.OK);
+            }
 
-        TokenDTO tokenDto = jwtUtil.createAllToken(user.getAccount());
+            TokenDTO tokenDto = jwtUtil.createAllToken(user.getAccount());
 
-        // redis
+            // redis
 //        Token existingToken = tokenRepository.getToken(user.getId());
 //        if (existingToken != null) {
 //            tokenRepository.updateToken(user.getId(), tokenDto.getRefreshToken());
@@ -102,23 +103,23 @@ public class UserService {
 //            tokenRepository.saveToken(user.getId(), tokenDto.getRefreshToken());
 //        }
 
-        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByUsersAccount(user.getAccount());
+            Optional<RefreshToken> refreshToken = refreshTokenRepository.findByUsersAccount(user.getAccount());
 
-        // 있다면 새토큰 발급후 업데이트
-        // 없다면 새로 만들고 디비 저장
-        if(refreshToken.isPresent()) {
-            refreshTokenRepository.save(refreshToken.get().updateToken(tokenDto.getRefreshToken()));
-        } else {
+            // 있다면 새토큰 발급후 업데이트
+            // 없다면 새로 만들고 디비 저장
+            if(refreshToken.isPresent()) {
+                refreshTokenRepository.save(refreshToken.get().updateToken(tokenDto.getRefreshToken()));
+            } else {
 
-            RefreshToken newToken = new RefreshToken(tokenDto.getRefreshToken(), user);
-            refreshTokenRepository.save(newToken);
-            user.setToken(newToken);
-        }
+                RefreshToken newToken = new RefreshToken(tokenDto.getRefreshToken(), user);
+                refreshTokenRepository.save(newToken);
+                user.setToken(newToken);
+            }
 
-        // response 헤더에 Access Token / Refresh Token 넣음
-        setHeader(response, tokenDto);
+            // response 헤더에 Access Token / Refresh Token 넣음
+            setHeader(response, tokenDto);
 
-        LoginResponse loginResponse =  LoginResponse.builder()
+            LoginResponse loginResponse =  LoginResponse.builder()
                 .id(user.getId())
                 .name(user.getName())
                 .account(user.getAccount())
@@ -133,7 +134,10 @@ public class UserService {
                 .tokenDto(tokenDto)
                 .build();
 
-        return new ResponseEntity<>(loginResponse, HttpStatus.OK);
+            return new ResponseEntity<>(loginResponse, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("로그인 에러: " + e, HttpStatus.OK);
+        }
     }
 
     public ResponseEntity<Object> refreshAccessToken(TokenDTO token, HttpServletResponse response) {
