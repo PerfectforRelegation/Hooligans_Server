@@ -117,7 +117,12 @@ public class MainController {
             {
                 Points points = pointRepository.findPointsByBetsIdAndUsers(oneBetting.getBets().getId(), users).get();
 
-                boolean reward = oneBetting.getBets().getWin().equals(points.getPick()) && !points.isResult();
+                boolean reward = false;
+
+                if (oneBetting.getBets().getWin() == null) {
+                } else if (oneBetting.getBets().getWin().equals(points.getPick()) && !points.isResult()){
+                    reward = true;
+                }
 
                 UserBetToMainDTO dto = UserBetToMainDTO.builder()
                     .betId(oneBetting.getBets().getId())
