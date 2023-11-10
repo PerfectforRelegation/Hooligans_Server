@@ -2,8 +2,14 @@ package com.example.hooligan01.controller;
 
 import com.example.hooligan01.dto.ImageDTO;
 import com.example.hooligan01.dto.Message;
+import java.nio.file.Files;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -47,6 +53,24 @@ public class ImageController {
 
             message = new Message("이미지 업로드 에러 " + e);
             return new ResponseEntity<>(message, HttpStatus.OK);
+        }
+    }
+
+    @GetMapping("/{filename}")
+    public ResponseEntity<Object> getImage(@PathVariable String filename) {
+
+        try {
+            Resource resource = new ClassPathResource("static/files/" + filename);
+
+            byte[] imageBytes = Files.readAllBytes(resource.getFile().toPath());
+
+            return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_JPEG)
+                .body(imageBytes);
+
+        } catch (Exception e) {
+
+            return new ResponseEntity<>(new Message("이미지 불러오기 에러: " + e), HttpStatus.OK);
         }
     }
 }
