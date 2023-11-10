@@ -178,17 +178,47 @@ public class UserService {
         response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
     }
 
-    public ResponseEntity<Object> update(Users user) {
+    public ResponseEntity<Object> update(Users inputUser) {
 
         Message message;
 
         try {
 
-            if (user.getId() == null) {
+            if (inputUser.getId() == null) {
 
                 message = new Message("유저 id가 null");
                 return new ResponseEntity<>(message, HttpStatus.OK);
             }
+
+            Optional<Users> userGet = userRepository.findById(inputUser.getId());
+
+            if (userGet.isEmpty())
+                return new ResponseEntity<>(new Message("유저 업데이트 에러: 아이디 값에 따른 유저 정보 없음"), HttpStatus.OK);
+
+            Users user = userGet.get();
+
+            if (inputUser.getNickname() != null) {
+
+                if (userRepository.findByNickname(inputUser.getNickname()).isPresent())
+                    return new ResponseEntity<>(new Message("존재하는 닉네임입니다."), HttpStatus.OK);
+
+                user.setNickname(inputUser.getNickname());
+            }
+
+            if (inputUser.getPassword() != null)
+                user.setPassword(passwordEncoder.encode(inputUser.getPassword()));
+
+            if (inputUser.getPhoneNumber() != null)
+                user.setPhoneNumber(inputUser.getPhoneNumber());
+
+            if (inputUser.getFavoriteTeam() != null)
+                user.setFavoriteTeam(inputUser.getFavoriteTeam());
+
+            if (inputUser.getFilename() != null)
+                user.setFilename(inputUser.getFilename());
+
+            if (inputUser.getFilepath() != null)
+                user.setFilepath(inputUser.getFilepath());
 
             userRepository.save(user);
             return new ResponseEntity<>(user, HttpStatus.OK);
