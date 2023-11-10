@@ -87,27 +87,6 @@ public class ChatRoomRepository {
         return true;
     }
 
-    // 채팅방 유저수 조회
-    public long getUserCount(String roomId) {
-        return opsHashChatRoom.get(CHAT_ROOMS, roomId).getCount();
-    }
-
-    // 채팅방에 입장한 유저수 +1
-    public long plusUserCount(String roomId) {
-        ChatRoom chatRoom = opsHashChatRoom.get(CHAT_ROOMS, roomId);
-        chatRoom.plusCount();
-        opsHashChatRoom.put(CHAT_ROOMS, chatRoom.getRoomId(), chatRoom);
-        return opsHashChatRoom.get(CHAT_ROOMS, roomId).getCount();
-    }
-
-    // 채팅방에 입장한 유저수 -1
-    public long minusUserCount(String roomId) {
-        ChatRoom chatRoom = opsHashChatRoom.get(CHAT_ROOMS, roomId);
-        chatRoom.minusCount();
-        opsHashChatRoom.put(CHAT_ROOMS, chatRoom.getRoomId(), chatRoom);
-        return opsHashChatRoom.get(CHAT_ROOMS, roomId).getCount();
-    }
-
     public ChannelTopic getTopic(String roomId) {
         return topics.get(roomId);
     }
