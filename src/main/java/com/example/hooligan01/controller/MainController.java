@@ -97,6 +97,9 @@ public class MainController {
 
             Optional<Users> userGet = userRepository.findById(userDetails.getUser().getId());
 
+            if (userGet.isEmpty())
+                return new ResponseEntity<>(new Message("메인.userRepository.findById 에러"), HttpStatus.OK);
+
             Users users = userGet.get();
 
             UserToMainDTO user = UserToMainDTO.builder()
@@ -112,7 +115,12 @@ public class MainController {
 
             for (Betting oneBetting : bettingList)
             {
-                Points points = pointRepository.findPointsByBetsIdAndUsers(oneBetting.getBets().getId(), users).get();
+                Optional<Points> pointGet = pointRepository.findPointsByBetsIdAndUsers(oneBetting.getBets().getId(), users);
+
+                if (pointGet.isEmpty())
+                    return new ResponseEntity<>(new Message("메인.pointRepository pointGet 에러"), HttpStatus.OK);
+
+                Points points = pointGet.get();
 
                 boolean reward = false;
 
