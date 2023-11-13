@@ -1,6 +1,6 @@
 package com.example.hooligan01.dto;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -16,7 +16,7 @@ public class BoardsDTO {
     private Integer heartCount;
     private Integer view;
     private Boolean modified;
-    private LocalDateTime boardDate;
+    private LocalDate boardDate;
     private String filename;
     private String filepath;
 }
