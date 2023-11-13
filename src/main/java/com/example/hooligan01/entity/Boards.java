@@ -1,11 +1,11 @@
 package com.example.hooligan01.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.time.LocalDateTime;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +38,7 @@ public class Boards {
 
     @CreationTimestamp
     @Column(nullable = false)
-    private LocalDate boardDate;
+    private LocalDateTime boardDate;
 
     /** 새로 추가한 코드 **/
     @Column

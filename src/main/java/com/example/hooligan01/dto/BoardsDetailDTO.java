@@ -1,12 +1,11 @@
 package com.example.hooligan01.dto;
 
-import com.example.hooligan01.entity.BoardComments;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -23,7 +22,7 @@ public class BoardsDetailDTO {
     private Integer heartCount;
     private Integer view;
     private Boolean modified;
-    private LocalDate boardDate;
+    private LocalDateTime boardDate;
     private String filename;
     private String filepath;
     private List<CommentDTO> comments;
